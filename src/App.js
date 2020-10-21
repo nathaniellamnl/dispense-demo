@@ -1,25 +1,68 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import Signin from './components/auth/Signin'
 
-function App() {
+const App = props => {
+
+  let routes = (
+    <Switch>
+      <Route
+        path="/"
+        exact
+        render={props => (
+          <LoginPage
+            {...props}
+            onLogin={this.loginHandler}
+            loading={this.state.authLoading}
+          />
+        )}
+      />
+      <Route
+        path="/signup"
+        exact
+        render={props => (
+          <SignupPage
+            {...props}
+            onSignup={this.signupHandler}
+            loading={this.state.authLoading}
+          />
+        )}
+      />
+      <Redirect to="/" />
+    </Switch>
+  );
+  if (this.state.isAuth) {
+    routes = (
+      <Switch>
+        <Route
+          path="/"
+          exact
+          render={props => (
+            <FeedPage userId={this.state.userId} token={this.state.token} />
+          )}
+        />
+        <Route
+          path="/:postId"
+          render={props => (
+            <SinglePostPage
+              {...props}
+              userId={this.state.userId}
+              token={this.state.token}
+            />
+          )}
+        />
+        <Redirect to="/" />
+      </Switch>
+    );
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    {routes}
+    < BrowserRouter >
+      <Switch>
+        <Route path="/" exact component={Signin} />
+      </Switch>
+    </BrowserRouter >
   );
 }
 
