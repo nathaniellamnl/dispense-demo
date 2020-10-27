@@ -1,0 +1,20 @@
+.main_container{
+    display: flex;
+    
+}
+
+.main_sidebar{
+    margin-top: 0px;
+    width: 10vw;
+    height: 100vh;
+    padding: 0 1rem;
+    align-items: center;
+    border-right: 0.5px solid #f0f0f0;
+}
+
+.main_content{
+    width: 90vw;
+}
+
+ 
+
