@@ -1,177 +1,200 @@
-import React, { Component, Fragment } from 'react';
-import {Redirect} from 'react-router-dom';
+import React, { useRef, useState, useEffect } from 'react';
 
-import AuthContext from '../../context/auth-context';
+import { graphqlServerUrl } from '../../../assets/String';
+import classes from './PersonalInfo.module.css';
 
+const PersonalInfo = (props) => {
+  const [personState, setPersonState] = useState('');
 
-const Mainpage = () => {
-  // state = {
-  //   postForm: POST_FORM,
-  //   formIsValid: false,
-  //   imagePreview: null
-  // };
+  useEffect(() => {
+    console.log(window.location.pathname);
+    const route = /[\/]patient[\/]existing[\/].+/
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (
-  //     this.props.editing &&
-  //     prevProps.editing !== this.props.editing &&
-  //     prevProps.selectedPost !== this.props.selectedPost
-  //   ) {
-  //     const postForm = {
-  //       title: {
-  //         ...prevState.postForm.title,
-  //         value: this.props.selectedPost.title,
-  //         valid: true
-  //       },
-  //       image: {
-  //         ...prevState.postForm.image,
-  //         value: this.props.selectedPost.imagePath,
-  //         valid: true
-  //       },
-  //       content: {
-  //         ...prevState.postForm.content,
-  //         value: this.props.selectedPost.content,
-  //         valid: true
-  //       }
-  //     };
-  //     this.setState({ postForm: postForm, formIsValid: true });
-  //   }
-  // }
+    if (route.test(window.location.pathname)) {
+      const requestBody = {
+        query: `
+             query {
+               patients(_id:"${window.location.pathname.split('/')[3]}") {
+                caseCode
+                chineseName 
+                englishName
+                age
+                contactNumber
+                dateOfRegistration
+                address
+                allergy
+                adverseDrugReaction
+                remark
+                updatedAt
+               }
+             }
+          `
+      };
+      fetch(graphqlServerUrl, {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }).then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed");
 
-  // postInputChangeHandler = (input, value, files) => {
-  //   if (files) {
-  //     generateBase64FromImage(files[0])
-  //       .then(b64 => {
-  //         this.setState({ imagePreview: b64 });
-  //       })
-  //       .catch(e => {
-  //         this.setState({ imagePreview: null });
-  //       });
-  //   }
-  //   this.setState(prevState => {
-  //     let isValid = true;
-  //     for (const validator of prevState.postForm[input].validators) {
-  //       isValid = isValid && validator(value);
-  //     }
-  //     const updatedForm = {
-  //       ...prevState.postForm,
-  //       [input]: {
-  //         ...prevState.postForm[input],
-  //         valid: isValid,
-  //         value: files ? files[0] : value
-  //       }
-  //     };
-  //     let formIsValid = true;
-  //     for (const inputName in updatedForm) {
-  //       formIsValid = formIsValid && updatedForm[inputName].valid;
-  //     }
-  //     return {
-  //       postForm: updatedForm,
-  //       formIsValid: formIsValid
-  //     };
-  //   });
-  // };
+        }
+        return res.json();
+      }).then(resData => {
+        setPersonState([...resData.data.patients]);
 
-  // inputBlurHandler = input => {
-  //   this.setState(prevState => {
-  //     return {
-  //       postForm: {
-  //         ...prevState.postForm,
-  //         [input]: {
-  //           ...prevState.postForm[input],
-  //           touched: true
-  //         }
-  //       }
-  //     };
-  //   });
-  // };
+      }).catch(err => {
+        console.log(err);
+      })
+    }
 
-  // cancelPostChangeHandler = () => {
-  //   this.setState({
-  //     postForm: POST_FORM,
-  //     formIsValid: false
-  //   });
-  //   this.props.onCancelEdit();
-  // };
+  }, [window.location.pathname]);
 
-  // acceptPostChangeHandler = () => {
-  //   const post = {
-  //     title: this.state.postForm.title.value,
-  //     image: this.state.postForm.image.value,
-  //     content: this.state.postForm.content.value
-  //   };
-  //   this.props.onFinishEdit(post);
-  //   this.setState({
-  //     postForm: POST_FORM,
-  //     formIsValid: false,
-  //     imagePreview: null
-  //   });
-  // };
+  useEffect(() => {
+    if (personState) {
+      personState.map(state => {
+        caseCode.current.value = state.caseCode;
+        chineseName.current.value = state.chineseName;
+        age.current.value = state.age;
+        contactNumber.current.value = state.contactNumber;
+        dateOfReg.current.value = state.dateOfRegistration;
+        address.current.value = state.address;
+        allergy.current.value = state.allergy;
+        adr.current.value = state.adverseDrugReaction;
+        remark.current.value = state.remark;
+      })
+    }
+
+  }, [personState])
 
 
-    return (
-      <AuthContext.Consumer>
-        {(context) => {
-          if (!context.token) {
+  const caseCode = useRef();
+  const chineseName = useRef();
+  const englishName = useRef();
+  const age = useRef();
+  const contactNumber = useRef();
+  const dateOfReg = useRef();
+  const address = useRef();
+  const allergy = useRef();
+  const adr = useRef();
+  const remark = useRef();
 
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
+    const caseCodeValue = caseCode.current.value;
+    const chineseNameValue = chineseName.current.value;
+    const englishNameValue = englishName.current.value;
+    const ageValue = age.current.value;
+    const contactNumberValue = contactNumber.current.value;
+    let dateOfRegValue = dateOfReg.current.value;
+    const addressValue = address.current.value;
+    const allergyValue = allergy.current.value;;
+    const adrValue = adr.current.value;
+    const remarkValue = remark.current.value;;
 
-          return  <Fragment>
-              <h2>Hi!@</h2>
-              {/* <Backdrop onClick={this.cancelPostChangeHandler} />
-        <Modal
-          title="New Post"
-          acceptEnabled={this.state.formIsValid}
-          onCancelModal={this.cancelPostChangeHandler}
-          onAcceptModal={this.acceptPostChangeHandler}
-          isLoading={this.props.loading}
-        >
-          <form>
-            <Input
-              id="title"
-              label="Title"
-              control="input"
-              onChange={this.postInputChangeHandler}
-              onBlur={this.inputBlurHandler.bind(this, 'title')}
-              valid={this.state.postForm['title'].valid}
-              touched={this.state.postForm['title'].touched}
-              value={this.state.postForm['title'].value}
-            />
-            <FilePicker
-              id="image"
-              label="Image"
-              control="input"
-              onChange={this.postInputChangeHandler}
-              onBlur={this.inputBlurHandler.bind(this, 'image')}
-              valid={this.state.postForm['image'].valid}
-              touched={this.state.postForm['image'].touched}
-            />
-            <div className="new-post__preview-image">
-              {!this.state.imagePreview && <p>Please choose an image.</p>}
-              {this.state.imagePreview && (
-                <Image imageUrl={this.state.imagePreview} contain left />
-              )}
-            </div>
-            <Input
-              id="content"
-              label="Content"
-              control="textarea"
-              rows="5"
-              onChange={this.postInputChangeHandler}
-              onBlur={this.inputBlurHandler.bind(this, 'content')}
-              valid={this.state.postForm['content'].valid}
-              touched={this.state.postForm['content'].touched}
-              value={this.state.postForm['content'].value}
-            />
-          </form>
-        </Modal> */}
-            </Fragment>
-          } else {
-            return <Redirect to="/"/>
-          }
-        }}
-      </AuthContext.Consumer>
-    )
-  
+    if (dateOfRegValue.length > 0) {
+      dateOfRegValue = new Date(dateOfRegValue).toISOString();
+    }
+
+    const fx = props.routeName === "/patient/new"? "createPatient":"updatePatient";
+    const id = props.routeName === "/patient/new"? null: `_id:"${window.location.pathname.split('/')[3]}",`;
+    const requestBody = {
+      query: `
+         mutation {
+             ${fx} (
+             ${id}  
+             patientInfoInput:{
+              caseCode: "${caseCodeValue}" ,
+              chineseName:"${chineseNameValue}",
+              englishName: "${englishNameValue}",
+              age:"${ageValue}",
+              contactNumber:"${contactNumberValue}",
+              dateOfRegistration:"${dateOfRegValue}",
+              address: "${addressValue}",
+              allergy: "${allergyValue}",
+              adverseDrugReaction: "${adrValue}",
+              remark: "${remarkValue}"           
+              }) {
+             age
+           }
+         }
+      `
+    };
+
+    fetch(graphqlServerUrl, {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }).then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("Failed");
+      }
+      return res.json();
+    }).then(resData => {
+
+    }).catch(err => {
+      console.log(err);
+    })
+
+  }
+
+  const NKDAHandler = () => {
+    allergy.current.value = "No Known Drug Allergy";
+  }
+
+  return (
+    <form className={classes.form_container} onSubmit={onSubmitHandler}>
+      <div className={classes.info_item}>
+        <label htmlFor="caseCode">Case Code:</label>
+        <input type="text" id="caseCode" name="caseCode" ref={caseCode}  ></input>
+      </div>
+      <div className={classes.info_item}>
+        <label htmlFor="chineseName">Chinese Name:</label>
+        <input type="text" id="chineseName" name="chineseName" ref={chineseName} ></input>
+      </div>
+      <div className={classes.info_item}>
+        <label htmlFor="englishName">English Name:</label>
+        <input type="text" id="englishName" name="englishName" ref={englishName}></input>
+      </div>
+      <div className={classes.info_item}>
+        <label htmlFor="age">Age:</label>
+        <input type="text" id="age" name="age" ref={age}></input>
+      </div>
+      <div className={classes.info_item}>
+        <label htmlFor="contactNumber">Contact Number:</label>
+        <input type="text" id="contactNumber" name="contactNumber" ref={contactNumber}></input>
+      </div>
+      <div className={classes.info_item}>
+        <label htmlFor="regDate">Date of Registration</label>
+        <input type="date" id="regDate" name="regDate" ref={dateOfReg}></input>
+      </div>
+      <div className={classes.info_item}>
+        <label htmlFor="address">Address:</label>
+        <textarea type="text" id="address" name="address" ref={address}></textarea>
+      </div>
+      <div className={classes.info_item}>
+        <label htmlFor="allergy" >Allergy:</label>
+        <div className={classes.NKDA_item} onClick={NKDAHandler}>NKDA</div>
+        <textarea id="allergy" name="allergy" rows="4" cols="20" ref={allergy}></textarea>
+      </div>
+      <div className={classes.info_item}>
+        <label htmlFor="adr">Adverse Drug Reaction:</label>
+        <textarea id="adr" name="adr" rows="4" cols="20" ref={adr}></textarea>
+      </div>
+      <div className={classes.info_item}>
+        <label htmlFor="remark">Remark:</label>
+        <textarea id="remark" name="remark" rows="4" cols="20" ref={remark}></textarea>
+      </div>
+      <div className={classes.spacer} />
+      <div className={classes.button_container}>
+        <button type="submit">{props.routeName === "/patient/new" ? "Create" : "Update"}</button>
+      </div>
+    </form>
+  )
 }
 
-export default FeedEdit;
+export default PersonalInfo;

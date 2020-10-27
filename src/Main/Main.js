@@ -4,7 +4,8 @@ import { NavLink, Route, Switch, Redirect } from 'react-router-dom';
 import NavigationItems from './MainSideBar/NavigationItems/NavigationItems'
 import Header from '../components/Navigation/MainNavigation/MainNavigation'
 import classes from './Main.module.css';
-import Patient from '../components/Patient/Patient';
+import NewPatient from '../components/Patient/NewPatient';
+import ExistingPatient from '../components/Patient/ExistingPatient';
 import Search from '../components/Search/Search';
 import AuthContext from '../context/auth-context';
 
@@ -18,19 +19,27 @@ const Main = (props) => {
                 return (
                     <Fragment>
                         <Header />
-
                         <div className={classes.main_container}>
                             <menu className={classes.main_sidebar}>
-                            <NavigationItems className={classes.sidebar} />
-                                {/* <div><NavLink to="/patient">Patient</NavLink></div>
-                                <div><NavLink to="/search">Search</NavLink></div> */}
+                            <NavigationItems />
                             </menu>
                             <div className={classes.main_content}>
+                                <Switch>
                                 <Route
-                                    path="/patient"
+                                    path="/patient/new"
                                     render={props => (
-                                        <Patient
+                                        <NewPatient
                                             {...props}
+                                            routeName="/patient/new"
+                                        />
+                                    )}
+                                />
+                                 <Route
+                                    path="/patient/existing"
+                                    render={props => (
+                                        <ExistingPatient
+                                            {...props}
+                                            routeName="/patient/existing"
                                         />
                                     )}
                                 />
@@ -42,7 +51,7 @@ const Main = (props) => {
                                         />
                                     )}
                                 />
-
+                                </Switch>
                             </div>
                         </div>
                     </Fragment>

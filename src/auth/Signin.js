@@ -1,6 +1,7 @@
 import React, { useRef, useContext } from 'react';
 import { Redirect,useHistory } from 'react-router-dom';
 
+import {graphqlServerUrl} from '../assets/String'
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -76,7 +77,8 @@ export default function SignIn(props) {
       `
     };
 
-    fetch('http://localhost:8000/graphql', {
+
+    fetch(graphqlServerUrl, {
       method: 'POST',
       body: JSON.stringify(requestBody),
       headers: {
@@ -86,6 +88,8 @@ export default function SignIn(props) {
       if (res.status !== 200 && res.status !== 201) {
         throw new Error("Failed");
       }
+      console.log("fetching2");
+
       return res.json();
     }).then(resData => {
       if (resData.data.login.token) {

@@ -5,7 +5,7 @@
 
 .main_sidebar{
     margin-top: 0px;
-    width: 10vw;
+    width: 15vw;
     height: 100vh;
     padding: 0 1rem;
     align-items: center;
@@ -13,7 +13,7 @@
 }
 
 .main_content{
-    width: 90vw;
+    width: 85vw;
 }
 
  
