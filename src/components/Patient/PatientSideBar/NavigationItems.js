@@ -4,7 +4,6 @@ import NavigationItem from './NavigationItem/NavigationItem'
 
 const navigationItems = (props) => {
 
-    console.log(props.patientBriefInfo);
     const patientBriefInfo = props.patientBriefInfo;
 
     return (

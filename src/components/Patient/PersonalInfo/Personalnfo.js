@@ -7,14 +7,13 @@ const PersonalInfo = (props) => {
   const [personState, setPersonState] = useState('');
 
   useEffect(() => {
-    console.log(window.location.pathname);
     const route = /[\/]patient[\/]existing[\/].+/
 
     if (route.test(window.location.pathname)) {
       const requestBody = {
-        query: `
+        query: `  
              query {
-               patients(_id:"${window.location.pathname.split('/')[3]}") {
+               patients(_id:"${window.location.pathname.split('/')[4]}") {
                 caseCode
                 chineseName 
                 englishName
@@ -99,7 +98,7 @@ const PersonalInfo = (props) => {
     }
 
     const fx = props.routeName === "/patient/new"? "createPatient":"updatePatient";
-    const id = props.routeName === "/patient/new"? null: `_id:"${window.location.pathname.split('/')[3]}",`;
+    const id = props.routeName === "/patient/new"? null: `_id:"${window.location.pathname.split('/')[4]}",`;
     const requestBody = {
       query: `
          mutation {

@@ -5,7 +5,7 @@ import NavigationItems from './MainSideBar/NavigationItems/NavigationItems'
 import Header from '../components/Navigation/MainNavigation/MainNavigation'
 import classes from './Main.module.css';
 import NewPatient from '../components/Patient/NewPatient';
-import ExistingPatient from '../components/Patient/ExistingPatient';
+import ExistingPatient from '../components/Patient/ExisitingPatient/ExistingPatient';
 import Search from '../components/Search/Search';
 import AuthContext from '../context/auth-context';
 

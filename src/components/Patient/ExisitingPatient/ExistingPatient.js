@@ -1,12 +1,15 @@
 import React, { Fragment, useEffect, useState,Suspense } from 'react';
 import { Route } from 'react-router-dom';
 
-import { graphqlServerUrl } from '../../assets/String';
-import NavigationItems from './PatientSideBar/NavigationItems';
-import classes from '../../Main/Main.module.css';
+import { graphqlServerUrl } from '../../../assets/String';
+import NavigationItems from '../PatientSideBar/NavigationItems';
+import classes from '../../../Main/Main.module.css';
 
-const PersonalInfo = React.lazy(() => import('./PersonalInfo/Personalnfo')
-);
+// const PersonalInfo = React.lazy(() => import('../PersonalInfo/Personalnfo')
+// );
+
+const ExistingPatientProfile = React.lazy( () => import('../PatientProfile/ExistingPatientProfile'));
+
 
 const Patient = (props) => {
 
@@ -44,10 +47,9 @@ const Patient = (props) => {
             return res.json();
         }).then(resData => {
             setPatientBriefInfo([...resData.data.patients]);
-            console.log()
+
         }).catch(err => {
-        })
-    
+        })    
     },[])
 
     const onNavHandler= ()=> {
@@ -60,16 +62,19 @@ const Patient = (props) => {
                     <NavigationItems patientBriefInfo={patientBriefInfo} click={onNavHandler} />
                 </menu>
                 <div className={classes.main_content}>
-                    {isNavClick? <Route
-                        path="/patient/:id"
+                    {isNavClick? 
+                    <Route
+                        exact
+                        path="/patient/existing/:id"
                         render={props => (
                             <Suspense fallback={<div>Loading...</div>}>
-                            <PersonalInfo
-                                routeName="/patient/existing"
+                            <ExistingPatientProfile
                                 {...props}
                             />
                             </Suspense>
-                        )}/> : null}
+                        )}
+                        /> 
+                        : null}
                     
                 </div>
             </div>

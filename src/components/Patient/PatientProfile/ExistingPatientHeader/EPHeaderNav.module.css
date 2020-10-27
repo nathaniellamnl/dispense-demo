@@ -1,0 +1,24 @@
+.main_nav {
+  height: 10%;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  background: yellow;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.main_nav__items {
+  list-style: none;
+  padding: 0;
+  margin: 0 1.5rem;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .main_nav__items {
+    display: flex;
+  }
+}
