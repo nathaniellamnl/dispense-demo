@@ -30,7 +30,6 @@ const Patient = (props) => {
                  }
               `
         };
-        console.log("fetching1");
         fetch(graphqlServerUrl, {
             method: 'POST',
             body: JSON.stringify(requestBody),
@@ -42,7 +41,6 @@ const Patient = (props) => {
                 throw new Error("Failed");
     
             }
-            console.log("fetching2");
     
             return res.json();
         }).then(resData => {
@@ -58,7 +56,7 @@ const Patient = (props) => {
     return (
         <Fragment>
             <div className={classes.main_container}>
-                <menu className={classes.main_sidebar}>
+                <menu className={classes['sidebar--existing-patient']}>
                     <NavigationItems patientBriefInfo={patientBriefInfo} click={onNavHandler} />
                 </menu>
                 <div className={classes.main_content}>

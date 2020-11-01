@@ -1,31 +1,32 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { Fragment, useEffect } from 'react';
 
-import Button from '../Button/Button';
-import './Modal.css';
+import classes from './Modal.module.css';
+import Backdrop from '../Backdrop/Backdrop'
 
-const modal = props =>
-  ReactDOM.createPortal(
-    <div className="modal">
-      <header className="modal__header">
-        <h1>{props.title}</h1>
-      </header>
-      <div className="modal__content">{props.children}</div>
-      <div className="modal__actions">
-        <Button design="danger" mode="flat" onClick={props.onCancelModal}>
-          Cancel
-        </Button>
-        <Button
-          mode="raised"
-          onClick={props.onAcceptModal}
-          disabled={!props.acceptEnabled}
-          loading={props.isLoading}
-        >
-          Accept
-        </Button>
+const Modal = (props) => {
+
+  // useEffect(() => {
+
+  // }, [])
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //     return nextProps.show !== this.props.show || nextProps.children !== this.props.children;
+  // }
+
+  return (
+    <Fragment>
+      <Backdrop show={props.show} clicked={props.modalClosed} />
+      <div
+        className={classes.Modal}
+        style={{
+          display: props.show ? 'block' : 'none',
+          transform: props.show ? 'translateY(0)' : 'translateY(-100vh)',
+          opacity: props.show ? '1' : '0'
+        }}>
+        {props.children}
       </div>
-    </div>,
-    document.getElementById('modal-root')
+    </Fragment>
   );
+}
 
-export default modal;
+export default Modal;

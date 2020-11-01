@@ -1,6 +1,6 @@
 import React from 'react';
 
-import NavigationItem from './NavigationItem/NavigationItem'
+import NavigationItem from './NavigationItem/NavigationItem';
 
 const navigationItems = (props) => {
 

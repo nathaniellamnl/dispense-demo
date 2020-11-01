@@ -1,5 +1,8 @@
 import React, { Fragment, useReducer, Suspense } from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { PDFViewer } from '@react-pdf/renderer';
+
+import PrintEntry from './components/Patient/PatientProfile/TransactionRecord/PrintTransaction/PrintTransaction';
 
 
 import Main from './Main/Main';
@@ -42,7 +45,6 @@ const App = props => {
           login: login,
           logout: logout
         }}>
-
           <main>
             <Switch>
               <Route
@@ -62,6 +64,15 @@ const App = props => {
                   // onSignup={this.signupHandler}
                   // loading={this.state.authLoading}
                   />
+                )}
+              />
+              <Route exact path="/print"
+                render={props => (
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <PDFViewer width="100%" height="1000" {...props}>
+                      {PrintEntry()}
+                    </PDFViewer>
+                  </Suspense>
                 )}
               />
               <Route

@@ -1,48 +1,86 @@
-import React, { Fragment } from 'react';
-import {Switch,Route} from 'react-router-dom';
+import React, { Fragment, Suspense, useEffect, useState } from 'react';
 
-import DispenseRecord from './DispenseRecord/DispenseRecord';
-import TransactionRecord from './TransactionRecord/TransactionRecord';
 import Header from '../PatientProfile/ExistingPatientHeader/EPHeaderNav';
-import classes from '../PatientProfile/ExistingPatientHeader/EPHeaderNav.module.css';
-import PersonalInfo from '../PersonalInfo/Personalnfo';
+import classes from './ExistingPatientProfile.module.css';
+import {graphqlServerUrl} from '../../../assets/String'
+const DispenseRecord = React.lazy(() => import('./DispenseRecord/DispenseRecord'));
+const TransactionRecord = React.lazy(() => import('./TransactionRecord/TransactionRecord'));
+const PersonalInfo = React.lazy(() => import('../PersonalInfo/Personalnfo'));
 
 const ExistingPatientProfile = (props) => {
 
+    const [component, setComponent] = useState("personalinfo");
+    const [patientInfo, setPatientInfo] = useState('');
+    
+    useEffect(() => {
+          const requestBody = {
+            query: `  
+                 query {
+                   patients(_id:"${window.location.pathname.split('/')[3]}") {
+                    caseCode
+                    chineseName 
+                    englishName
+                   }
+                 }
+              `
+          };
+          fetch(graphqlServerUrl, {
+            method: 'POST',
+            body: JSON.stringify(requestBody),
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          }).then(res => {
+            if (res.status !== 200 && res.status !== 201) {
+              throw new Error("Failed");
+    
+            }
+            return res.json();
+          }).then(resData => {
+            setPatientInfo([...resData.data.patients, {_id:window.location.pathname.split('/')[3]}]);
+    
+          }).catch(err => {
+            console.log(err);
+          })
+    
+      }, [window.location.pathname]);
+    
+    const onClickHandler = (id) => {
+        setComponent(id);
+    }
 
     return (
         <Fragment>
-            <Header/>
-            <div className={classes.main_content}>
-                <Switch>
-                    <Route
-                        path="/patient/existing/:id/personainfo"
-                        render={props => (
-                            <PersonalInfo
-                                {...props}
-                                routeName="/patient/existing"
-                            />
-                        )}
-                    />
-                    <Route
-                        path="/patient/existing/:id/dispenserecord"
-                        render={props => (
-                            <DispenseRecord
-                                {...props}
-                            />
-                        )}
-                    />
-                    <Route
-                        path="/patient/existing/:id/transactionrecord"
-                        render={props => (
-                            <TransactionRecord
-                            />
-                        )}
-                    />
-                </Switch>
+            <Header onNavHandler={onClickHandler} clickedHeader={component}/>
+            <div className={classes['component-container']}>
+                {component === "personalinfo" ?
+                    <Suspense fallback={<h1>loading...</h1>}>
+                        <PersonalInfo
+                            {...props}
+                            routeName="/patient/existing"
+                        />
+                    </Suspense>
+                    : null}
+                {component === "transactionrecord" ?
+                    <Suspense fallback={<h1>loading...</h1>}>
+                        <TransactionRecord
+                        patientInfo={patientInfo}
+                            {...props}
+                        />
+                    </Suspense>
+                    : null}
+                {component === "dispenserecord" ?
+                    <Suspense fallback={<h1>loading...</h1>}>
+                        <DispenseRecord
+                        patientInfo={patientInfo}
+                            {...props}
+                        />
+                    </Suspense>
+                    : null}
             </div>
-        </Fragment>
+        </Fragment >
     )
 }
 
-export default ExistingPatientProfile;
+
+export default React.memo(ExistingPatientProfile);

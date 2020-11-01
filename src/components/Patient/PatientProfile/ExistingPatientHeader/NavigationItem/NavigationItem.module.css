@@ -1,0 +1,32 @@
+.NavigationItem {
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 10px 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  color:black;
+  cursor: pointer;
+}
+
+.NavigationItem button{
+  outline: none;
+  font: inherit;
+  border: none;
+  color: black;
+  background: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+
+.NavigationItem button:hover,
+.NavigationItem button:active,
+.NavigationItem button.active,
+.NavigationItem button:focus {
+  border: none;
+  color: #40a4c8;
+}
+
+

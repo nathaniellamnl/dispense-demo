@@ -13,7 +13,7 @@ const PersonalInfo = (props) => {
       const requestBody = {
         query: `  
              query {
-               patients(_id:"${window.location.pathname.split('/')[4]}") {
+               patients(_id:"${window.location.pathname.split('/')[3]}") {
                 caseCode
                 chineseName 
                 englishName
@@ -98,7 +98,7 @@ const PersonalInfo = (props) => {
     }
 
     const fx = props.routeName === "/patient/new"? "createPatient":"updatePatient";
-    const id = props.routeName === "/patient/new"? null: `_id:"${window.location.pathname.split('/')[4]}",`;
+    const id = props.routeName === "/patient/new"? null: `_id:"${window.location.pathname.split('/')[3]}",`;
     const requestBody = {
       query: `
          mutation {

@@ -3,7 +3,8 @@
     
 }
 
-.main_sidebar{
+.main_sidebar,
+.sidebar--existing-patient{
     margin-top: 0px;
     width: 15vw;
     height: 100vh;
@@ -16,5 +17,7 @@
     width: 85vw;
 }
 
- 
+.sidebar--existing-patient{
+    background: whitesmoke;
+} 
 

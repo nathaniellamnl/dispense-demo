@@ -1,0 +1,71 @@
+.form{
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+.icon-container__modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.section-container{
+    display: flex;
+    align-items: top;
+    margin-top: 10px;
+}
+
+.section-chlid--vertical,
+.section-chlid {
+    margin-right: 20px;
+}
+
+
+.section-chlid--vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.spacer{
+    margin-left: 15px;
+}
+
+.remark-container{
+    margin-top: 15px;
+    display: flex;
+    align-items: top;
+}
+
+
+.div-container--horiz {
+    display: flex;
+}
+
+.input--long {
+    width: 500px;
+}
+
+
+.button {
+    margin: 10px auto 0;
+    font: inherit;
+    border: 1px solid #3b0062;
+    color: #3b0062;
+    background: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-color: #a30000;
+    color: #a30000;
+  }
+  
+  .button:hover,
+  .button:active {
+    background: #a30000;
+    color: white;
+  }
+  
+  .button-container {
+      text-align: center;
+  }

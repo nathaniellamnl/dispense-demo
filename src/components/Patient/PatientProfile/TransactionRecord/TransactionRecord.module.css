@@ -1,0 +1,18 @@
+
+.icon-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+
+
+.section-child{
+    padding-right: 1rem;
+}
+
+.spacer{
+    margin-left: 5px;
+}

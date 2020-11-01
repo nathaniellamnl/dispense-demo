@@ -1,15 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-import './Backdrop.css';
+import classes from './Backdrop.module.css';
 
-const backdrop = props =>
-  ReactDOM.createPortal(
-    <div
-      className={['backdrop', props.open ? 'open' : ''].join(' ')}
-      onClick={props.onClick}
-    />,
-    document.getElementById('backdrop-root')
-  );
+const backdrop = (props) => (
+    props.show? <div className={classes.Backdrop} onClick={props.clicked}></div> : null
+);
 
 export default backdrop;
