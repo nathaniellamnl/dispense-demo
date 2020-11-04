@@ -1,10 +1,11 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer';
-import logo from '../../../../../assets/Images/hkpcfLogo.jpg'
+import logo from '../../../../../assets/Images/Pharmacy.jpg'
 import font from '../../../../../assets/Fonts/wangHanZou.ttf';
 
-Font.register({ family: 'WangHanZou', src: font })
 
+Font.register({ family: 'WangHanZou', src: font })
+Font.registerHyphenationCallback(word => { return [word] });
 // Create styles
 const styles = StyleSheet.create({
   page: {
@@ -83,11 +84,15 @@ const styles = StyleSheet.create({
   },
   text_prepay: {
     fontFamily: 'WangHanZou',
-    //  alignSelf: "flex-end",
-    textAlign:"center",
+    textAlign: "left",
     fontSize: 10,
+    marginLeft: "70%",
+    marginRight: "20%",
+  },
+  text_stamp: {
+    textAlign: "left",
+    fontSize: 9,
     marginLeft: "60%",
-    marginRight: 20
   }
 });
 
@@ -96,40 +101,31 @@ const MyDocument = () => (
   <Document>
     <Page size="A4" style={styles.page}>
       <Image src={logo} style={styles.image} />
-      <Text style={styles.header}>Official Receipt</Text>
-      <Text style={styles.header}>SafeMed Dispensary 配安心藥房</Text>
-      <Text style={styles.header}>O/B The Hong Kong Pharmaceutical Care Foundation LTD.</Text>
-      <Text style={styles.header}>九龍荔枝角長沙灣道889號華創中心7樓3及4工作室1號房</Text>
-      <Text style={styles.header}>Room 1,Workshop3&4, 7th Floor, CRE Centre, 889 Cheung Sha Wan Road, Lai Chi Kok, Kowloon</Text>
-      <Text style={styles.header}>SafeMed Dispensary 配安心藥房</Text>
-      <Text style={styles.header}>Tel:2979 0380      Fax:3708 8553      Website:www.pcfhk.org      Email:info@pcfhk.org</Text>
+      <Text style={styles.header}>Receipt</Text>
+      <Text style={styles.header}>Dispensary</Text>
+      <Text style={styles.header}>221 B Baker Street</Text>
+      <Text style={styles.header}>Dispensary</Text>
+      <Text style={styles.header}>Tel:999         Website:www.dispensary.org      Email:support@dispensary.org</Text>
       <Text style={styles.spacer}></Text>
-      <Text style={styles.snippet}>Issue Date:                                           Receipt No.:</Text>
-      <Text style={styles.snippet}>Customer Name:                                          Rx No.:</Text>
-      <Text style={styles.snippet}>Customer No.:</Text>
+      <Text style={styles.snippet}>Issue Date:</Text>
+      <Text style={styles.snippet}>Customer Name:</Text>
       <Text style={styles.spacer}></Text>
       <View style={styles.table}>
         <View style={styles.tableRow}>
-          <View style={[styles.tableCol, { width: "45%" }]}>
-            <Text style={styles.tableCell}>Description</Text>
+          <View style={[styles.tableCol, { width: "60%" }]}>
+            <Text style={styles.tableCell}>Drug Item</Text>
           </View>
           <View style={styles.tableCol}>
             <Text style={styles.tableCell}>Quantity</Text>
           </View>
           <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>Unit Price (HKD)</Text>
-          </View>
-          <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>Amount (HKD)</Text>
+            <Text style={styles.tableCell}>Amount (USD)</Text>
           </View>
         </View>
         {/* TableContent */}
         <View style={styles.tableRow}>
-          <View style={[styles.tableCol, { width: "45%" }]}>
+          <View style={[styles.tableCol, { width: "60%" }]}>
             <Text style={styles.text__left}>Eliquis (Apixaban) 5mg tablet</Text>
-          </View>
-          <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>5 x 56 Tablets</Text>
           </View>
           <View style={styles.tableCol}>
             <Text style={styles.text__right}>644</Text>
@@ -140,7 +136,7 @@ const MyDocument = () => (
         </View>
         <View style={styles.tableRow}>
           <View style={[styles.tableCol, { width: "75%" }]}>
-            <Text style={styles.text__right}>Total (HKD):</Text>
+            <Text style={styles.text__right}>Total (USD):</Text>
           </View>
           <View style={styles.tableCol}>
             <Text style={styles.text__right}>4,156</Text>
@@ -151,43 +147,32 @@ const MyDocument = () => (
       <View style={styles.table}>
         <View style={styles.tableRow}>
           <View style={[styles.tableCol, { width: "75%" }]}>
-            <Text style={styles.text__left}>Payment Method</Text>
+            <Text style={styles.text__left}>Payment</Text>
           </View>
           <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>Amount (HKD)</Text>
+            <Text style={[styles.tableCell,{padding: 5}]}>Amount (USD)</Text>
           </View>
         </View>
         <View style={styles.tableRow}>
           <View style={[styles.tableCol, { width: "75%" }]}>
-            <Text style={styles.text__left}>Direct deposit:</Text>
-            <Text style={[styles.text__left, { fontFamily: 'WangHanZou' }]}>Bank Name: HSBC 匯豐銀行</Text>
-            <Text style={styles.text__left}>Account name: The Hong Kong Pharmaceutical Care Foundation</Text>
-            <Text style={styles.text__left}>Account no.:582-360863-001</Text>
-            <Text style={styles.text__left}>Transfer date: October 30, 2020</Text>
+            <Text style={styles.text__left}>Transaction date: October 30, 2020</Text>
           </View>
           <View style={styles.tableCol}>
           </View>
         </View>
         <View style={styles.tableRow}>
           <View style={[styles.tableCol, { width: "75%" }]}>
-            <Text style={styles.text__right}>Total amount paid(HKD):</Text>
+            <Text style={styles.text__right}>Total amount paid(USD):</Text>
           </View>
           <View style={styles.tableCol}>
-            <Text style={styles.text__right}>HK$4,186</Text>
+            <Text style={styles.text__right}>4,186</Text>
           </View>
         </View>
       </View>
-      <Text style={styles.text_reminder}>本人已經閱讀及同意接受配安心藥房的藥物資助計劃或一般購藥的各個事項及安排。</Text>
-      <Text style={styles.text_reminder}>備註: 藥物一經購買，恕不更換、退還及退款。</Text>
-      <Text style={styles.text_prepay}>2020年10月23日先領取56粒Eliquis5mg尚欠75粒藥物未領取。餘下56粒藥物需待獲得下一張有效的醫生處方方可領取。</Text>
-      <Text style={styles.text_prepay}>
-        本人明白如果將來覆診有任何藥物或劑量變更，令本人無法獲得有效的醫生處方領取剩餘藥物，剩餘藥物將無法退款。
-      </Text>
-      <Text style={[styles.text__left, { marginLeft: "10%", fontFamily: "WangHanZou" }]}>Acknowledged by customer (顧客確認):</Text>
       <Text style={styles.spacer}></Text>
-      <Text style={[styles.text__left, { marginLeft: "10%", fontFamily: "WangHanZou" }]}>Signature (簽署):____________________</Text>
-      <Text style={[styles.text__left, { marginLeft: "10%", fontFamily: "WangHanZou" }]}>Date (日期):____________________</Text>
-      <Text style={[styles.text__left, { marginLeft: "10%", fontFamily: "WangHanZou" }]}>______年___月___日領取餘下______粒藥物。已領取本單所有藥物。</Text>
+      <Text style={[styles.text__left, { marginLeft: "10%", fontFamily: "WangHanZou" }]}>Signature :____________________</Text>
+      <Text style={[styles.text__left, { marginLeft: "10%", fontFamily: "WangHanZou" }]}>Date :____________________</Text>
+      <Text style={styles.spacer}></Text>   
     </Page>
   </Document>
 );

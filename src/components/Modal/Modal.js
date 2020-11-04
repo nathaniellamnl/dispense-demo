@@ -21,7 +21,9 @@ const Modal = (props) => {
         style={{
           display: props.show ? 'block' : 'none',
           transform: props.show ? 'translateY(0)' : 'translateY(-100vh)',
-          opacity: props.show ? '1' : '0'
+          opacity: props.show ? '1' : '0',
+          width: props.width,
+          height:props.height,
         }}>
         {props.children}
       </div>

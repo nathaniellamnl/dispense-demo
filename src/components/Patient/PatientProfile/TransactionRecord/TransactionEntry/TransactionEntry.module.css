@@ -46,6 +46,8 @@
 }
 
 
+
+
 .button {
     margin: 10px auto 0;
     font: inherit;
@@ -68,4 +70,9 @@
   
   .button-container {
       text-align: center;
+  }
+
+  .two-buttons-container {
+      display: flex;
+      justify-content: space-around;
   }
