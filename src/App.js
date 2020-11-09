@@ -2,15 +2,12 @@ import React, { Fragment, useReducer, Suspense } from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { PDFViewer } from '@react-pdf/renderer';
 
-import PrintEntry from './components/Patient/PatientProfile/TransactionRecord/PrintTransaction/PrintTransaction';
-
-
 import Main from './Main/Main';
 import LoginPage from './auth/Signin';
 // import SignupPage from './auth/Signup';
 import AuthContext from './context/auth-context';
-const SignupPage = React.lazy(() => import('./auth/Signup')
-);
+const SignupPage = React.lazy(() => import('./auth/Signup'));
+const PrintEntry = React.lazy(() => import('./components/Patient/PatientProfile/TransactionRecord/PrintTransaction/PrintTransaction'));
 
 const authStateReducer = (currentAuthState, action) => {
   switch (action.type) {
@@ -66,12 +63,13 @@ const App = props => {
                   />
                 )}
               />
-              <Route exact path="/print"
+              <Route  
+              path="/print"
                 render={props => (
                   <Suspense fallback={<div>Loading...</div>}>
-                    <PDFViewer width="100%" height="1000" {...props}>
-                      {PrintEntry()}
-                    </PDFViewer>
+                    {/* <PDFViewer width="100%" height="100%" {...props}> */}
+                      <PrintEntry/>
+                    {/* </PDFViewer> */}
                   </Suspense>
                 )}
               />

@@ -26,7 +26,6 @@ const drugPurchaseReducer = (currentPurchaseState, action) => {
             return {
                 ...currentPurchaseState,
                 amount: action.amount
-                // uploadToServer: true
             };
         case 'Back':
             return {
@@ -39,48 +38,24 @@ const drugPurchaseReducer = (currentPurchaseState, action) => {
 };
 
 const TransactionEntry = (props) => {
-    let initialState = [];
     let initDrugItemNum = 1;
-    let initialPurchaseState = { creatingNew: true };
 
-    console.log(props.transaction);
+    const initialStateCopy = [];
+    for (const drug of props.transaction.drugs) {
+        initialStateCopy.push({ name: drug, price: "" });
+    }
 
-    if (props.transaction) {
-        initDrugItemNum = props.transaction.drugs.length;
+    const initialState = [
+        ...initialStateCopy
+    ]
 
-        const initialStateCopy=[];
-        for (const drug of props.transaction.drugs) {
-            initialStateCopy.push({ name: drug, price: "" });
-        }
-
-        initialState = [
-            ...initialStateCopy
-        ]
-
-        console.log(initialState);
-
-        initialPurchaseState = {
-            transactionDate: props.transaction.transactionDate,
-            drugs: props.transaction.drugs,
-            quantities: props.transaction.quantities,
-            remark: props.transaction.remark,
-            amount: props.transaction.amount,
-            creatingNew: false
-        }
-
-    } else {
-        initialState = [
-            { name: "", price: "" },
-            { name: "", price: "" },
-            { name: "", price: "" },
-            { name: "", price: "" },
-            { name: "", price: "" },
-            { name: "", price: "" },
-            { name: "", price: "" },
-            { name: "", price: "" },
-            { name: "", price: "" },
-            { name: "", price: "" }
-        ]
+    const initialPurchaseState = {
+        transactionDate: props.transaction.transactionDate,
+        drugs: props.transaction.drugs,
+        quantities: props.transaction.quantities,
+        remark: props.transaction.remark,
+        amount: props.transaction.amount,
+        creatingNew: true
     }
 
     const [drugNames, setDrugNames] = useState(initialState);
@@ -99,44 +74,6 @@ const TransactionEntry = (props) => {
     const addDrugItemHandler = () => {
         setDrugItem(drugItem + 1);
     }
-
-
-    //upload data to backend
-    // useEffect(() => {
-    //     if (purchaseState.uploadToServer) {
-
-    //      }} , [purchaseState.uploadToServer])
-
-    // populate data after the back button is clicked
-    useEffect(() => {
-        for (let i = 1; i <= drugItem; i++) {
-            if (purchaseState.drugs) {
-                let drugChosen;
-                for (const drug of drugChart) {
-                    if (purchaseState.drugs[i - 1] == drug.name) {
-                        drugChosen = { ...drug };
-                        break;
-                    }
-                }
-            }
-            if (drugQtyRef.current && drugQtyRef.current[i - 1] && purchaseState.quantities) {
-                drugQtyRef.current[i - 1].value = purchaseState.quantities[i - 1]
-            }
-        }
-
-        if (paidAmount.current) {
-            paidAmount.current.value = purchaseState.amount;
-        }
-
-        if (transactionDate.current && purchaseState.transactionDate) {
-            transactionDate.current.value = purchaseState.transactionDate;
-        }
-
-        if (remark.current && purchaseState.transactionDate) {
-            remark.current.value = purchaseState.remark;
-        }
-
-    }, [purchaseState])
 
     const onSubmit = (data) => {
         const prices = [];
@@ -183,7 +120,6 @@ const TransactionEntry = (props) => {
     }
 
     const onSubmitAmount = (data) => {
-
         const requestBody = {
             query: `  
                  mutation CreateTransaction($drugs: [String!]!,$quantities: [String!]! ,$id:ID!){
@@ -263,6 +199,8 @@ const TransactionEntry = (props) => {
                             <div className={classes['section-chlid--vertical']}>
                                 <label htmlFor={"drugItem" + i + "Unit"}>Drug Item {i} Quantity:</label>
                                 <input
+                                onChange={}
+                                value={}
                                     type="text"
                                     id={"drugItem" + i + "Unit"}
                                     name={"drugItem" + i + "Unit"}
@@ -288,6 +226,7 @@ const TransactionEntry = (props) => {
                     <section >
                         <label htmlFor="transactionDate">Transaction Date:</label>
                         <input
+                            value={new Date(purchaseState.transactionDate)}
                             className={classes['spacer']}
                             type="date" id="transactionDate" name="transactionDate"
                             ref={(ref) => {

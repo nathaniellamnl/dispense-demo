@@ -1,7 +1,10 @@
-import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer';
+import React, { useEffect, useState, Fragment } from 'react';
+import { PDFViewer, Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer';
+
+import drugChart from '../../../../../assets/DrugChart';
 import logo from '../../../../../assets/Images/Pharmacy.jpg'
 import font from '../../../../../assets/Fonts/wangHanZou.ttf';
+import { graphqlServerUrl } from '../../../../../assets/String';
 
 
 Font.register({ family: 'WangHanZou', src: font })
@@ -17,7 +20,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontFamily: 'WangHanZou',
     fontSize: 10
-
   },
   text: {
     alignSelf: "center",
@@ -68,7 +70,7 @@ const styles = StyleSheet.create({
   text__right: {
     alignSelf: "flex-end",
     fontSize: 10,
-    padding: 5
+    padding: 4
   },
   text__left: {
     alignSelf: "flex-start",
@@ -97,84 +99,157 @@ const styles = StyleSheet.create({
 });
 
 // Create Document Component
-const MyDocument = () => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <Image src={logo} style={styles.image} />
-      <Text style={styles.header}>Receipt</Text>
-      <Text style={styles.header}>Dispensary</Text>
-      <Text style={styles.header}>221 B Baker Street</Text>
-      <Text style={styles.header}>Dispensary</Text>
-      <Text style={styles.header}>Tel:999         Website:www.dispensary.org      Email:support@dispensary.org</Text>
-      <Text style={styles.spacer}></Text>
-      <Text style={styles.snippet}>Issue Date:</Text>
-      <Text style={styles.snippet}>Customer Name:</Text>
-      <Text style={styles.spacer}></Text>
-      <View style={styles.table}>
-        <View style={styles.tableRow}>
-          <View style={[styles.tableCol, { width: "60%" }]}>
-            <Text style={styles.tableCell}>Drug Item</Text>
-          </View>
-          <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>Quantity</Text>
-          </View>
-          <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>Amount (USD)</Text>
-          </View>
-        </View>
-        {/* TableContent */}
-        <View style={styles.tableRow}>
-          <View style={[styles.tableCol, { width: "60%" }]}>
-            <Text style={styles.text__left}>Eliquis (Apixaban) 5mg tablet</Text>
-          </View>
-          <View style={styles.tableCol}>
-            <Text style={styles.text__right}>644</Text>
-          </View>
-          <View style={styles.tableCol}>
-            <Text style={styles.text__right}>4,156</Text>
-          </View>
-        </View>
-        <View style={styles.tableRow}>
-          <View style={[styles.tableCol, { width: "75%" }]}>
-            <Text style={styles.text__right}>Total (USD):</Text>
-          </View>
-          <View style={styles.tableCol}>
-            <Text style={styles.text__right}>4,156</Text>
-          </View>
-        </View>
-      </View>
-      <Text style={styles.spacer}></Text>
-      <View style={styles.table}>
-        <View style={styles.tableRow}>
-          <View style={[styles.tableCol, { width: "75%" }]}>
-            <Text style={styles.text__left}>Payment</Text>
-          </View>
-          <View style={styles.tableCol}>
-            <Text style={[styles.tableCell,{padding: 5}]}>Amount (USD)</Text>
-          </View>
-        </View>
-        <View style={styles.tableRow}>
-          <View style={[styles.tableCol, { width: "75%" }]}>
-            <Text style={styles.text__left}>Transaction date: October 30, 2020</Text>
-          </View>
-          <View style={styles.tableCol}>
-          </View>
-        </View>
-        <View style={styles.tableRow}>
-          <View style={[styles.tableCol, { width: "75%" }]}>
-            <Text style={styles.text__right}>Total amount paid(USD):</Text>
-          </View>
-          <View style={styles.tableCol}>
-            <Text style={styles.text__right}>4,186</Text>
-          </View>
-        </View>
-      </View>
-      <Text style={styles.spacer}></Text>
-      <Text style={[styles.text__left, { marginLeft: "10%", fontFamily: "WangHanZou" }]}>Signature :____________________</Text>
-      <Text style={[styles.text__left, { marginLeft: "10%", fontFamily: "WangHanZou" }]}>Date :____________________</Text>
-      <Text style={styles.spacer}></Text>   
-    </Page>
-  </Document>
-);
+const PrintTransaction = (props) => {
+  const [transaction, setTransaction] = useState();
+  // [{transactionDate: null, customerName: null}]
+  useEffect(() => {
+    const transactionId = window.location.pathname.split("/")[2]
+    const requestBody = {
+      query: `
+           query Transactions($id:ID) {
+             transactions(_id:$id) {
+              _id
+              transactionDate
+              drugs
+              quantities
+              remark
+              amount
+              customerName
+             }
+           }
+        `,
+      variables: {
+        id: transactionId
+      }
+    };
+    fetch(graphqlServerUrl, {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }).then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("Failed");
+      }
+      return res.json();
+    }).then(resData => {
 
-export default MyDocument;
+      const transaction = resData.data.transactions[0];
+
+      const tranformedDrugs = [];
+
+      for (let i = 0; i < transaction.drugs.length; i++) {
+        for(let j = 0; j < drugChart.length; j++) {
+          if(drugChart[j].name === transaction.drugs[i]){
+            tranformedDrugs.push({ drug: transaction.drugs[i], quantity: transaction.quantities[i], price: drugChart[j].price});    
+            break;
+          }
+        }
+      }
+
+      const transformedTransaction = {
+        ...transaction,
+        drugs: tranformedDrugs
+      };
+
+      setTransaction(transformedTransaction);
+    }).catch(err => {
+
+    })
+  }, [])
+
+  return (
+    <Fragment>
+      {transaction ?
+        (
+          <PDFViewer width="100%" height="700" {...props}>
+            <Document>
+              <Page size="A4" style={styles.page}>
+                <Image src={logo} style={styles.image} />
+                <Text style={styles.header}>Receipt</Text>
+                <Text style={styles.header}>Dispensary</Text>
+                <Text style={styles.header}>221 B Baker Street</Text>
+                <Text style={styles.header}>Dispensary</Text>
+                <Text style={styles.header}>Tel:999         Website:www.exampledispensary.org      Email:support@exampledispensary.org</Text>
+                <Text style={styles.spacer}></Text>
+                <Text style={styles.snippet}>Issue Date: {transaction.transactionDate.substring(0, 10)}</Text>
+                <Text style={styles.snippet}>Customer Name: {transaction.customerName}</Text>
+                <Text style={styles.spacer}></Text>
+                <View style={styles.table}>
+                  <View style={styles.tableRow}>
+                    <View style={[styles.tableCol, { width: "60%" }]}>
+                      <Text style={styles.tableCell}>Drug Item</Text>
+                    </View>
+                    <View style={styles.tableCol}>
+                      <Text style={styles.tableCell}>Quantity</Text>
+                    </View>
+                    <View style={styles.tableCol}>
+                      <Text style={styles.tableCell}>Amount (USD)</Text>
+                    </View>
+                  </View>
+                  {/* TableContent */}
+                  {transaction.drugs.map(drug => {
+
+                    return (<View style={styles.tableRow}>
+                      <View style={[styles.tableCol, { width: "60%" }]}>
+                        <Text style={styles.text__left}>{drug.drug}</Text>
+                      </View>
+                      <View style={styles.tableCol}>
+                        <Text style={styles.text__right}>{drug.quantity}</Text>
+                      </View>
+                      <View style={styles.tableCol}>
+                        <Text style={styles.text__right}>{(+drug.price)*(+drug.quantity)}</Text>
+                      </View>
+                    </View>
+                    )
+                  })}
+
+                  <View style={styles.tableRow}>
+                    <View style={[styles.tableCol, { width: "75%" }]}>
+                      <Text style={styles.text__right}>Total (USD):</Text>
+                    </View>
+                    <View style={styles.tableCol}>
+                      <Text style={styles.text__right}>{transaction.amount}</Text>
+                    </View>
+                  </View>
+                </View>
+                <Text style={styles.spacer}></Text>
+                <View style={styles.table}>
+                  <View style={styles.tableRow}>
+                    <View style={[styles.tableCol, { width: "75%" }]}>
+                      <Text style={styles.text__left}>Payment</Text>
+                    </View>
+                    <View style={styles.tableCol}>
+                      <Text style={[styles.tableCell, { padding: 5 }]}>Amount (USD)</Text>
+                    </View>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <View style={[styles.tableCol, { width: "75%" }]}>
+                      <Text style={styles.text__left}>Transaction date: {transaction.transactionDate.substring(0, 10)}</Text>
+                    </View>
+                    <View style={styles.tableCol}>
+                    </View>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <View style={[styles.tableCol, { width: "75%" }]}>
+                      <Text style={styles.text__right}>Total amount paid(USD):</Text>
+                    </View>
+                    <View style={styles.tableCol}>
+                      <Text style={styles.text__right}>{transaction.amount}</Text>
+                    </View>
+                  </View>
+                </View>
+                <Text style={styles.spacer}></Text>
+                <Text style={[styles.text__left, { marginLeft: "10%", fontFamily: "WangHanZou" }]}>Signature :____________________</Text>
+                <Text style={[styles.text__left, { marginLeft: "10%", fontFamily: "WangHanZou" }]}>Date :____________________</Text>
+                <Text style={styles.spacer}></Text>
+              </Page>
+            </Document>
+          </PDFViewer>) : null}
+  )
+    </Fragment>
+  )
+};
+
+export default PrintTransaction;

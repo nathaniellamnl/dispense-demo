@@ -2,7 +2,7 @@ import React, { Fragment, Suspense, useEffect, useState } from 'react';
 
 import Header from '../PatientProfile/ExistingPatientHeader/EPHeaderNav';
 import classes from './ExistingPatientProfile.module.css';
-import {graphqlServerUrl} from '../../../assets/String'
+import {graphqlServerUrl} from '../../../assets/String';
 const DispenseRecord = React.lazy(() => import('./DispenseRecord/DispenseRecord'));
 const TransactionRecord = React.lazy(() => import('./TransactionRecord/TransactionRecord'));
 const PersonalInfo = React.lazy(() => import('../PersonalInfo/Personalnfo'));
@@ -65,6 +65,7 @@ const ExistingPatientProfile = (props) => {
                     <Suspense fallback={<h1>loading...</h1>}>
                         <TransactionRecord
                         patientInfo={patientInfo}
+                        patientId={window.location.pathname.split('/')[3]}
                             {...props}
                         />
                     </Suspense>

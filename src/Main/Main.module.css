@@ -1,13 +1,13 @@
 .main_container{
     display: flex;
-    
 }
 
 .main_sidebar,
 .sidebar--existing-patient{
     margin-top: 0px;
+    margin-bottom: 0px;
+    min-height: 100vh;
     width: 15vw;
-    height: 100vh;
     padding: 0 1rem;
     align-items: center;
     border-right: 0.5px solid #f0f0f0;
