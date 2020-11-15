@@ -17,7 +17,6 @@ import { graphqlServerUrl } from '../../../../assets/String';
 import Modal from '../../../Modal/Modal';
 import classescss from './TransactionRecord.module.css';
 const TransactionEntry = React.lazy(() => import('./TransactionEntry/TransactionEntry'));
-const UpdateEntry = React.lazy(() => import('./TransactionEntry/CopyTransactionEntry'));
 
 
 const useStyles = makeStyles({
@@ -28,30 +27,50 @@ const useStyles = makeStyles({
 
 const TransactionRecord = (props) => {
     const classes = useStyles();
-    const [creatingNewEntry, setCreatingNewEntry] = useState(false);
-    const [updatingNewEntry, setUpdatingEntry] = useState(false);
+    const [openEntry, setOpenEntry] = useState(false);
     const [transactionRecord, setTransactionRecord] = useState();
     const [selectedTransaction, setSelectedTransaction] = useState();
     // const [printEntry, setPrintEntry] = useState(false);
 
-    const addHandler = () => {
-        setCreatingNewEntry(true);
+    const openEntryHandler = (transactionId) => {
+        setSelectedTransaction(transactionId);
+        setOpenEntry(true);
     }
 
-    const updateHandler = (transaction) => {
-        setSelectedTransaction(transaction);
-        setUpdatingEntry(true);
-    }
+    const deleteHandler = (transactionId) => {
+        const requestBody = {
+            query: `
+                 mutation DeleteTransaction($transactionId:ID!) {
+                   deleteTransaction(_id:$transactionId)
+                 }
+              `,
+            variables: {
+                transactionId:transactionId 
+            }
+        };
+        fetch(graphqlServerUrl, {
+            method: 'POST',
+            body: JSON.stringify(requestBody),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(res => {
+            if (res.status !== 200 && res.status !== 201) {
+                throw new Error("Failed");
+            }
+            return res.json();
+        }).then(resData => {
 
-    const deleteHandler = (id) => {
+        }).catch(err => {
 
+        })
     }
 
     const cancelCreationHandler = () => {
-        setCreatingNewEntry(false);
-        setUpdatingEntry(false);
+        setOpenEntry(false);
     }
 
+    //readData
     useEffect(() => {
         const requestBody = {
             query: `
@@ -94,29 +113,17 @@ const TransactionRecord = (props) => {
         // if (newWindow) newWindow.opener = null
     }
 
-    const onCreateEntryHandler = () => {
-        setCreatingNewEntry(false);
-    }
-
     return (
         <Fragment>
             <h2>{props.patientInfo[0].caseCode + " " + props.patientInfo[0].chineseName + "(" + props.patientInfo[0].englishName + ")"}</h2>
 
-            <Modal show={creatingNewEntry} modalClosed={cancelCreationHandler}>
+            <Modal show={openEntry} modalClosed={cancelCreationHandler}>
                 <Suspense fallback={<div>Loading...</div>}>
-                    <TransactionEntry patientId={props.patientId} />
+                    <TransactionEntry patientId={props.patientId} transactionId={openEntry && selectedTransaction? selectedTransaction:null}/>
                 </Suspense>
             </Modal>
-
-            <Modal show={updatingNewEntry} modalClosed={cancelCreationHandler}>
-                {selectedTransaction?
-                <Suspense fallback={<div>Loading...</div>}>
-                    <UpdateEntry patientId={props.patientId} transaction={selectedTransaction} />
-                </Suspense>:null}
-            </Modal>
-
             <div className={classescss['icon-container']}>
-                <IconButton onClick={addHandler}>
+                <IconButton onClick={() => openEntryHandler(null)}>
                     <AddCircleIcon style={{ fill: "green", cursor: 'pointer' }} />
                 </IconButton>
                 <span>Add new entry</span>
@@ -150,7 +157,7 @@ const TransactionRecord = (props) => {
                                             <PrintIcon style={{ fill: "green", cursor: 'pointer' }} />
                                         </IconButton></TableCell>
                                     <TableCell align="center">
-                                        <IconButton onClick={() => updateHandler(row)}>
+                                        <IconButton onClick={() => openEntryHandler(row._id)}>
                                             <EditIcon style={{ fill: "blue", cursor: 'pointer' }} />
                                         </IconButton>
                                         <IconButton onClick={() => deleteHandler(row._id)}>
