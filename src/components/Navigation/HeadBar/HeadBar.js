@@ -5,21 +5,18 @@ import MobileToggle from '../MobileToggle/MobileToggle';
 import Logo from '../../Logo/Logo';
 import NavigationItems from '../NavigationItems/NavigationItems';
 
-import './MainNavigation.css';
+import './HeadBar.module.css';
+import classes from './HeadBar.module.css';
 
 const mainNavigation = props => (
-  <nav className="main-nav">
+  <nav className="head-bar">
     <MobileToggle onOpen={props.onOpenMobileNav} />
     
-    <div className="main-nav__logo">
-      <NavLink to="/">
-        <Logo />
-      </NavLink>
-    </div>
     <div className="spacer" />
-    <ul className="main-nav__items">
+    <div className={classes["circle"]}>A</div>
+    {/* <ul className="main-nav__items">
       <NavigationItems isAuth={props.isAuth} onLogout={props.onLogout} />
-    </ul>
+    </ul> */}
   </nav>
 );
 

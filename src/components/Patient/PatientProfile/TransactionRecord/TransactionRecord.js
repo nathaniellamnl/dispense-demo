@@ -13,11 +13,12 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { IconButton } from '@material-ui/core';
 
+import Loader from '../../../../components/Loader/Loader';
+import Button from '../../../Button/Button';
 import { graphqlServerUrl } from '../../../../assets/String';
 import Modal from '../../../Modal/Modal';
 import classescss from './TransactionRecord.module.css';
 const TransactionEntry = React.lazy(() => import('./TransactionEntry/TransactionEntry'));
-
 
 const useStyles = makeStyles({
     table: {
@@ -27,17 +28,32 @@ const useStyles = makeStyles({
 
 const TransactionRecord = (props) => {
     const classes = useStyles();
-    const [openEntry, setOpenEntry] = useState(false);
+    const [openEntry, setOpenEntry] = useState({ open: false, transactionId: null });
+    const [openDeleteModal, setOpenDeleteModal] = useState({ open: false, transactionId: null });
     const [transactionRecord, setTransactionRecord] = useState();
-    const [selectedTransaction, setSelectedTransaction] = useState();
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [longestEntryLength, setLongestEntryLength] = useState(0);
+
     // const [printEntry, setPrintEntry] = useState(false);
 
     const openEntryHandler = (transactionId) => {
-        setSelectedTransaction(transactionId);
-        setOpenEntry(true);
+        setOpenEntry({ open: true, transactionId: transactionId });
     }
 
-    const deleteHandler = (transactionId) => {
+    const closeEntryHandler = () => {
+        setOpenEntry({ open: false, transactionId: null });
+    }
+
+    const openDeleteModalHandler = (transactionId) => {
+        setOpenDeleteModal({ open: true, transactionId: transactionId });
+    }
+
+    const closeDeleteModalHandler = () => {
+        setOpenDeleteModal({ open: false, transactionId: null });
+    }
+
+    const deleteHandler = () => {
+
         const requestBody = {
             query: `
                  mutation DeleteTransaction($transactionId:ID!) {
@@ -45,9 +61,11 @@ const TransactionRecord = (props) => {
                  }
               `,
             variables: {
-                transactionId:transactionId 
+                transactionId: openDeleteModal.transactionId
             }
         };
+
+        setIsDeleting(true);
         fetch(graphqlServerUrl, {
             method: 'POST',
             body: JSON.stringify(requestBody),
@@ -60,17 +78,15 @@ const TransactionRecord = (props) => {
             }
             return res.json();
         }).then(resData => {
-
+            setIsDeleting(false);
+            closeDeleteModalHandler();
         }).catch(err => {
-
+            alert("An unexpected error occured!")
+            setIsDeleting(false);
         })
     }
 
-    const cancelCreationHandler = () => {
-        setOpenEntry(false);
-    }
-
-    //readData
+    //fetch transactionrecord
     useEffect(() => {
         const requestBody = {
             query: `
@@ -106,7 +122,18 @@ const TransactionRecord = (props) => {
         }).catch(err => {
 
         })
-    }, [props.patientId]);
+    }, [props]);
+
+    useEffect(() => {
+        if (transactionRecord) {
+            let length = 0;
+            transactionRecord.map((tx) => {
+                length = Math.max(length, tx.drugs.length);
+            })
+
+            setLongestEntryLength(length);
+        }
+    }, [transactionRecord]);
 
     const openInNewTab = (id) => {
         const newWindow = window.open("/print/" + id, '_blank', 'noopener,noreferrer')
@@ -115,60 +142,75 @@ const TransactionRecord = (props) => {
 
     return (
         <Fragment>
-            <h2>{props.patientInfo[0].caseCode + " " + props.patientInfo[0].chineseName + "(" + props.patientInfo[0].englishName + ")"}</h2>
-
-            <Modal show={openEntry} modalClosed={cancelCreationHandler}>
-                <Suspense fallback={<div>Loading...</div>}>
-                    <TransactionEntry patientId={props.patientId} transactionId={openEntry && selectedTransaction? selectedTransaction:null}/>
-                </Suspense>
-            </Modal>
-            <div className={classescss['icon-container']}>
-                <IconButton onClick={() => openEntryHandler(null)}>
-                    <AddCircleIcon style={{ fill: "green", cursor: 'pointer' }} />
-                </IconButton>
-                <span>Add new entry</span>
-            </div>
-            <TableContainer component={Paper}>
-                <Table className={classes.table} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="right">Drug&nbsp;Item&nbsp;1</TableCell>
-                            <TableCell align="right">Drug&nbsp;Item&nbsp;1&nbsp;Qty</TableCell>
-                            <TableCell align="right">Drug&nbsp;Item&nbsp;2</TableCell>
-                            <TableCell align="right">Drug&nbsp;Item&nbsp;2&nbsp;Qty</TableCell>
-                            <TableCell align="right">Paid&nbsp;Amount&nbsp;</TableCell>
-                            <TableCell align="right">Transaction&nbsp;Date&nbsp;</TableCell>
-                            <TableCell align="center">Print</TableCell>
-                            <TableCell align="center">Edit</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {transactionRecord ?
-                            transactionRecord.map((row) => (
-                                <TableRow key={row._id}>
-                                    <TableCell align="right">{row.drugs[0]}</TableCell>
-                                    <TableCell align="right">{row.quantities[0]}</TableCell>
-                                    <TableCell align="right">{row.drugs[1]}</TableCell>
-                                    <TableCell align="right">{row.quantities[1]}</TableCell>
-                                    <TableCell align="right">{row.amount}</TableCell>
-                                    <TableCell align="right">{row.transactionDate.substring(0, 10)}</TableCell>
-                                    <TableCell align="center">
-                                        <IconButton onClick={() => openInNewTab(row._id)}>
-                                            <PrintIcon style={{ fill: "green", cursor: 'pointer' }} />
-                                        </IconButton></TableCell>
-                                    <TableCell align="center">
-                                        <IconButton onClick={() => openEntryHandler(row._id)}>
-                                            <EditIcon style={{ fill: "blue", cursor: 'pointer' }} />
-                                        </IconButton>
-                                        <IconButton onClick={() => deleteHandler(row._id)}>
-                                            <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} />
-                                        </IconButton>
-                                    </TableCell>
+            {transactionRecord && transactionRecord.length === 0 ?
+                <p>The patient does not have any transaction record.</p> :
+                <Fragment>
+                    <h2>{props.patientInfo[0].caseCode + " " + props.patientInfo[0].chineseName + "(" + props.patientInfo[0].englishName + ")"}</h2>
+                    <Modal show={openEntry.open} modalClosed={closeEntryHandler}>
+                        <Suspense fallback={<div>Loading...</div>}>
+                            <TransactionEntry cancelModal={closeEntryHandler} patientId={props.patientId} transactionId={openEntry.transactionId} />
+                        </Suspense>
+                    </Modal>
+                    <Modal show={openDeleteModal.open} modalClosed={closeDeleteModalHandler}>
+                        {isDeleting ? <Loader /> :
+                            <Fragment>
+                                <p>Are you sure you want to delete this transaction entry?</p>
+                                <Button buttonNames={["Delete", "Cancel"]} action={deleteHandler} cancel={closeDeleteModalHandler} />
+                            </Fragment>}
+                    </Modal>
+                    <div className={classescss['icon-container']}>
+                        <IconButton onClick={() => openEntryHandler(null)}>
+                            <AddCircleIcon style={{ fill: "green", cursor: 'pointer' }} />
+                        </IconButton>
+                        <span>Add new entry</span>
+                    </div>
+                    <TableContainer component={Paper}>
+                        <Table className={classes.table} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="center">Edit</TableCell>
+                                    <TableCell align="center">Print</TableCell>
+                                    {[...Array(longestEntryLength)].map((x, i) =>
+                                        <Fragment key={i}>
+                                            <TableCell align="right">Drug&nbsp;Item&nbsp;{i + 1}</TableCell>
+                                            <TableCell align="right">Drug&nbsp;Item&nbsp;{i + 1}&nbsp;Qty</TableCell>
+                                        </Fragment>
+                                    )}
+                                    <TableCell align="right">Paid&nbsp;Amount&nbsp;</TableCell>
+                                    <TableCell align="right">Transaction&nbsp;Date&nbsp;</TableCell>
                                 </TableRow>
-                            )) : null}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                            </TableHead>
+                            <TableBody>
+                                {transactionRecord ?
+                                    transactionRecord.map((row) => (
+                                        <TableRow key={row._id}>
+                                            <TableCell align="center">
+                                                <IconButton onClick={() => openEntryHandler(row._id)}>
+                                                    <EditIcon style={{ fill: "blue", cursor: 'pointer' }} />
+                                                </IconButton>
+                                                <IconButton onClick={() => openDeleteModalHandler(row._id)}>
+                                                    <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} />
+                                                </IconButton>
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <IconButton onClick={() => openInNewTab(row._id)}>
+                                                    <PrintIcon style={{ fill: "green", cursor: 'pointer' }} />
+                                                </IconButton>
+                                            </TableCell>
+                                            {[...Array(longestEntryLength)].map((x, i) =>
+                                                <Fragment key={i}>
+                                                    <TableCell align="right">{i >= row.drugs ? null : row.drugs[i]}</TableCell>
+                                                    <TableCell align="right">{i >= row.quantities ? null : row.quantities[i]}</TableCell>
+                                                </Fragment>
+                                            )}
+                                            <TableCell align="right">{row.amount}</TableCell>
+                                            <TableCell align="right">{row.transactionDate.substring(0, 10)}</TableCell>
+                                        </TableRow>
+                                    )) : null}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Fragment>}
         </Fragment>
     )
 }

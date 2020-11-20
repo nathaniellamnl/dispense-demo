@@ -1,0 +1,27 @@
+.button {
+  margin: 10px auto 0;
+  font: inherit;
+  border: 1px solid #3b0062;
+  color: #3b0062;
+  background: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-color: #a30000;
+  color: #a30000;
+}
+
+.button:hover,
+.button:active {
+  background: #a30000;
+  color: white;
+}
+
+.button-container {
+  text-align: center;
+}
+
+.button-container > button {
+  margin: 0 10%;
+}

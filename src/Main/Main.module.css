@@ -14,7 +14,7 @@
 }
 
 .main_content{
-    width: 85vw;
+    max-width: 75vw;
 }
 
 .sidebar--existing-patient{

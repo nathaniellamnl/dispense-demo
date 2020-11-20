@@ -5,6 +5,7 @@ import drugChart from '../../../../../assets/DrugChart';
 import logo from '../../../../../assets/Images/Pharmacy.jpg'
 import font from '../../../../../assets/Fonts/wangHanZou.ttf';
 import { graphqlServerUrl } from '../../../../../assets/String';
+import Loader from '../../../../../components/Loader/Loader';
 
 
 Font.register({ family: 'WangHanZou', src: font })
@@ -163,9 +164,9 @@ const PrintTransaction = (props) => {
     <Fragment>
       {transaction ?
         (
-          <PDFViewer width="100%" height="700" {...props}>
-            <Document>
-              <Page size="A4" style={styles.page}>
+          <PDFViewer width="100%" height="1000vh" {...props}>
+            <Document> 
+              <Page size="A4" style={styles.page} >
                 <Image src={logo} style={styles.image} />
                 <Text style={styles.header}>Receipt</Text>
                 <Text style={styles.header}>Dispensary</Text>
@@ -246,7 +247,7 @@ const PrintTransaction = (props) => {
                 <Text style={styles.spacer}></Text>
               </Page>
             </Document>
-          </PDFViewer>) : null}
+          </PDFViewer>) : <Loader/>}
   )
     </Fragment>
   )

@@ -1,78 +1,81 @@
-.form{
-    width: 100%;
-    height: 100%;
-    overflow: auto;
+.form {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
 }
-.icon-container__modal {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.section-container{
-    display: flex;
-    align-items: top;
-    margin-top: 10px;
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.section-chlid--vertical,
-.section-chlid {
-    margin-right: 20px;
+.section-container {
+  display: flex;
+  align-items: top;
+  margin-top: 15px;
 }
-
 
 .section-chlid--vertical {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
-.spacer{
-    margin-left: 15px;
+.spacer {
+  margin-left: 40px;
 }
 
-.remark-container{
-    margin-top: 15px;
-    display: flex;
-    align-items: top;
+.remark-container,
+.amount-container {
+  margin-top: 15px;
 }
-
+.remark-container {
+  display: flex;
+  align-items: top;
+}
 
 .div-container--horiz {
-    display: flex;
+  display: flex;
 }
 
 .input--long {
-    width: 500px;
+  width: 500px;
 }
 
-
-
-
 .button {
-    margin: 10px auto 0;
-    font: inherit;
-    border: 1px solid #3b0062;
-    color: #3b0062;
-    background: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    text-transform: uppercase;
-    text-decoration: none;
-    border-color: #a30000;
-    color: #a30000;
-  }
-  
-  .button:hover,
-  .button:active {
-    background: #a30000;
-    color: white;
-  }
-  
-  .button-container {
-      text-align: center;
-  }
+  margin: 10px auto 0;
+  font: inherit;
+  border: 1px solid #3b0062;
+  color: #3b0062;
+  background: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-color: #a30000;
+  color: #a30000;
+}
 
-  .two-buttons-container {
-      display: flex;
-      justify-content: space-around;
-  }
+.button:hover,
+.button:active {
+  background: #a30000;
+  color: white;
+}
+
+.button-container {
+  text-align: center;
+}
+
+.amount-container > div {
+    word-wrap: break-word;
+    width: 100px;  
+}
+
+.error{
+  border: solid 1px #f44336;
+}
+
+.error-text{
+  color:#f44336;
+  font-size: small;
+  margin: 0 5px;
+}

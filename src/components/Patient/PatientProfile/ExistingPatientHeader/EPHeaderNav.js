@@ -10,7 +10,6 @@ const mainNavigation = props => {
   const navItems = [
     { id: 'personalinfo', text: 'Personal Information', link: `/patient/existing/${id}/personalinfo`, auth: true },
     { id: 'transactionrecord', text: 'Transaction Record', link: `/patient/existing/${id}/transactionrecord`, auth: true },
-    { id: 'dispenserecord', text: 'Dispense Record', link: `/patient/existing/${id}/dispenserecord`, auth: false },
   ];
 
   return (<nav>

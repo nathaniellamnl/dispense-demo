@@ -7,9 +7,7 @@ const transformId = (id) => {
         case "personalinfo":
             return "Personal Information";
         case  "transactionrecord":
-            return "Transaction Record";
-        case "dispenserecord":
-            return "Dispense Record";       
+            return "Transaction Record";    
     }
 }
 

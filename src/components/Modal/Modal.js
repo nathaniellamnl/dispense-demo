@@ -1,21 +1,16 @@
 import React, { Fragment, useEffect } from 'react';
 
 import classes from './Modal.module.css';
-import Backdrop from '../Backdrop/Backdrop'
+import Backdrop from '../Backdrop/Backdrop';
+import CloseIcon from '@material-ui/icons/Close';
+import { IconButton } from '@material-ui/core';
+
 
 const Modal = (props) => {
 
-  // useEffect(() => {
-
-  // }, [])
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //     return nextProps.show !== this.props.show || nextProps.children !== this.props.children;
-  // }
-
   return (
     <Fragment>
-      <Backdrop show={props.show} clicked={props.modalClosed} />
+      <Backdrop show={props.show}  />
       <div
         className={classes.Modal}
         style={{
@@ -25,6 +20,11 @@ const Modal = (props) => {
           width: props.width,
           height:props.height,
         }}>
+         <div className={classes["close-icon-container"]}>
+           <IconButton onClick={props.modalClosed}>
+             <CloseIcon style={{ cursor: 'pointer' }}/>
+           </IconButton>
+           </div> 
         {props.children}
       </div>
     </Fragment>

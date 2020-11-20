@@ -1,14 +1,9 @@
 import React from 'react';
 
-import './Loader.css';
+import classes from './Loader.module.css';
 
 const loader = props => (
-  <div className="loader">
-    <div />
-    <div />
-    <div />
-    <div />
-  </div>
+  <div className={classes.Loader}>Loading...</div>
 );
 
 export default loader;

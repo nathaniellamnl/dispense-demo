@@ -1,33 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import classes from "./Button.module.css";
 
-import './Button.css';
+const Button = (props) => {
+    return (
+        <section className={classes['button-container']}>
+            {
+            props.buttonNames.map((name) => {
+               return <button onClick={name==="Cancel"?props.cancel:props.action} key={name} className={classes.button} type="button">{name}</button>
+            })}
+        </section>
+    )
+}
 
-const button = props =>
-  !props.link ? (
-    <button
-      className={[
-        'button',
-        `button--${props.design}`,
-        `button--${props.mode}`
-      ].join(' ')}
-      onClick={props.onClick}
-      disabled={props.disabled || props.loading}
-      type={props.type}
-    >
-      {props.loading ? 'Loading...' : props.children}
-    </button>
-  ) : (
-    <Link
-      className={[
-        'button',
-        `button--${props.design}`,
-        `button--${props.mode}`
-      ].join(' ')}
-      to={props.link}
-    >
-      {props.children}
-    </Link>
-  );
-
-export default button;
+export default Button;

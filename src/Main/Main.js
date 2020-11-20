@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 import { NavLink, Route, Switch, Redirect } from 'react-router-dom';
 
 import NavigationItems from './MainSideBar/NavigationItems/NavigationItems'
-import Header from '../components/Navigation/MainNavigation/MainNavigation'
+import Layout from '../components/Layout/Layout'
 import classes from './Main.module.css';
 import NewPatient from '../components/Patient/NewPatient';
 import ExistingPatient from '../components/Patient/ExisitingPatient/ExistingPatient';
@@ -17,8 +17,7 @@ const Main = (props) => {
             {(context) => {
                 // if (context.token) {
                 return (
-                    <Fragment>
-                        <Header />
+                    <Layout>
                         <div className={classes.main_container}>
                             <menu className={classes.main_sidebar}>
                             <NavigationItems />
@@ -54,7 +53,7 @@ const Main = (props) => {
                                 </Switch>
                             </div>
                         </div>
-                    </Fragment>
+                    </Layout>
                 )
                 // } else {
                 //     return <Redirect to='/signin' />
