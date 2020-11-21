@@ -7,7 +7,47 @@
     font: 1rem 'Fira Sans', sans-serif;
 } */
 
-.form_container input,
+.form_container {
+  padding:  2rem;
+  width: 60vw;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  height: 90%;
+}
+
+.info-item {
+  width: 25vw;
+  justify-self: flex-start;
+  display: flex;
+  flex-direction: column;
+}
+
+textarea {
+  resize: none;
+}
+
+button {
+  grid-column: 1/3;
+  font: inherit;
+  border: 1px solid #3b0062;
+  color: #3b0062;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-color: #a30000;
+  color: #a30000;
+}
+
+button:hover,
+button:active {
+    background: #a30000;
+    color: white;
+  }
+
+/* .form_container input,
 .form_container label,
 .form_container textarea {
     margin: .4rem 0;
@@ -60,10 +100,10 @@
 .info_item label{
     display: block;
     font: 1rem 'Fira Sans', sans-serif;
-}
+} */
 
 .NKDA_item {
-    color:blue;
-    text-decoration: underline;
-    cursor: pointer;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
 }

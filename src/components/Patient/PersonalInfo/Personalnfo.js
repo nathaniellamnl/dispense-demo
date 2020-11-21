@@ -97,8 +97,8 @@ const PersonalInfo = (props) => {
       dateOfRegValue = new Date(dateOfRegValue).toISOString();
     }
 
-    const fx = props.routeName === "/patient/new"? "createPatient":"updatePatient";
-    const id = props.routeName === "/patient/new"? null: `_id:"${window.location.pathname.split('/')[3]}",`;
+    const fx = props.routeName === "/patient/new" ? "createPatient" : "updatePatient";
+    const id = props.routeName === "/patient/new" ? null : `_id:"${window.location.pathname.split('/')[3]}",`;
     const requestBody = {
       query: `
          mutation {
@@ -147,51 +147,48 @@ const PersonalInfo = (props) => {
 
   return (
     <form className={classes.form_container} onSubmit={onSubmitHandler}>
-      <div className={classes.info_item}>
+      <section className={classes["info-item"]}>
         <label htmlFor="caseCode">Case Code:</label>
         <input type="text" id="caseCode" name="caseCode" ref={caseCode}  ></input>
-      </div>
-      <div className={classes.info_item}>
+      </section>
+      <section className={classes["info-item"]}>
         <label htmlFor="chineseName">Chinese Name:</label>
         <input type="text" id="chineseName" name="chineseName" ref={chineseName} ></input>
-      </div>
-      <div className={classes.info_item}>
+      </section>
+      <section className={classes["info-item"]}>
         <label htmlFor="englishName">English Name:</label>
         <input type="text" id="englishName" name="englishName" ref={englishName}></input>
-      </div>
-      <div className={classes.info_item}>
+      </section>
+      <section className={classes["info-item"]}>
         <label htmlFor="age">Age:</label>
         <input type="text" id="age" name="age" ref={age}></input>
-      </div>
-      <div className={classes.info_item}>
+      </section>
+      <section className={classes["info-item"]}>
         <label htmlFor="contactNumber">Contact Number:</label>
         <input type="text" id="contactNumber" name="contactNumber" ref={contactNumber}></input>
-      </div>
-      <div className={classes.info_item}>
+      </section>
+      <section className={classes["info-item"]}>
         <label htmlFor="regDate">Date of Registration</label>
         <input type="date" id="regDate" name="regDate" ref={dateOfReg}></input>
-      </div>
-      <div className={classes.info_item}>
+      </section>
+      <section className={classes["info-item"]}>
         <label htmlFor="address">Address:</label>
         <textarea type="text" id="address" name="address" ref={address}></textarea>
-      </div>
-      <div className={classes.info_item}>
+      </section>
+      <section className={classes["info-item"]}>
         <label htmlFor="allergy" >Allergy:</label>
         <div className={classes.NKDA_item} onClick={NKDAHandler}>NKDA</div>
         <textarea id="allergy" name="allergy" rows="4" cols="20" ref={allergy}></textarea>
-      </div>
-      <div className={classes.info_item}>
+      </section>
+      <section className={classes["info-item"]}>
         <label htmlFor="adr">Adverse Drug Reaction:</label>
         <textarea id="adr" name="adr" rows="4" cols="20" ref={adr}></textarea>
-      </div>
-      <div className={classes.info_item}>
+      </section>
+      <section className={classes["info-item"]}>
         <label htmlFor="remark">Remark:</label>
         <textarea id="remark" name="remark" rows="4" cols="20" ref={remark}></textarea>
-      </div>
-      <div className={classes.spacer} />
-      <div className={classes.button_container}>
-        <button type="submit">{props.routeName === "/patient/new" ? "Create" : "Update"}</button>
-      </div>
+      </section>
+      <button type="submit">{props.routeName === "/patient/new" ? "Create" : "Update"}</button>
     </form>
   )
 }

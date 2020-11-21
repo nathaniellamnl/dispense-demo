@@ -1,0 +1,17 @@
+.new-patient-container{
+    display: flex;
+}
+
+.personal-info-container {
+    margin-top: 4rem;
+    height: 85vh;
+}
+
+.background{
+    width: 30vw;
+    background: url("../../../assets/Images/Pill.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+}

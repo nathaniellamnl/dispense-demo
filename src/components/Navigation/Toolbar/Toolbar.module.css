@@ -1,10 +1,11 @@
 .Toolbar {
-    height: 56px;
+    height: 4rem;
     width: 100%;
     position: fixed;
     top: 0;
     left: 0;
     background: rgb(171, 16, 50);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -17,9 +18,9 @@
     height: 100%;
 }
 
-.Logo {
+/* .Logo {
     height: 80%;
-}
+} */
 
 /* @media (max-width: 499px) {
     .DesktopOnly {
@@ -28,12 +29,12 @@
 } */
 
 .circle {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 1rem;
-    font-size: 1rem;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1.5rem;
+    font-size: 1.5rem;
     color: #ffffff;
-    line-height: 2rem;
+    line-height: 3rem;
     text-align: center;
     background: rgb(41,98, 255);
   }

@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom';
 
 import { graphqlServerUrl } from '../../../assets/String';
 import NavigationItems from '../PatientSideBar/NavigationItems';
-import classes from '../../../Main/Main.module.css';
+import classes from './ExistingPatient.module.css';
 
 // const PersonalInfo = React.lazy(() => import('../PersonalInfo/Personalnfo')
 // );
@@ -54,12 +54,11 @@ const Patient = (props) => {
         setIsNavClick(true);
     }
     return (
-        <Fragment>
-            <div className={classes.main_container}>
-                <menu className={classes['sidebar--existing-patient']}>
+            <div className={classes["main-container"]}>
+                <menu className={classes['sidebar']}>
                     <NavigationItems patientBriefInfo={patientBriefInfo} click={onNavHandler} />
                 </menu>
-                <div className={classes.main_content}>
+                <main className={classes.main_content}>
                     {isNavClick? 
                     <Route
                         exact
@@ -74,9 +73,8 @@ const Patient = (props) => {
                         /> 
                         : null}
                     
-                </div>
+                </main>
             </div>
-        </Fragment>
     )
 }
 

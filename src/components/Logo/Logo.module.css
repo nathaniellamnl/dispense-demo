@@ -1,11 +1,27 @@
 .Logo {
-    background-color: white;
-    padding: 0px;
-    height: 100%;
-    box-sizing: border-box;
-    border-radius: 5px;
+  background-color: rgb(238, 240, 239);
+  padding: 0px;
+  padding-left: 10px;
+  margin: 0 0;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  color: #ab1032;
+  align-items: center;
+  font-size: x-large;
 }
 
-.Logo img {
-    height: 100%;
+.welcome-msg {
+    font-size: larger;
+    padding-left: 5px;
+    color:rgb(117,117,137);
+}
+
+.demo{
+    padding: 3px;
+    width: auto;
+    text-align: center;
+    font-size: medium;
+    background: rgb(119,11,35);
+    color: white;
 }

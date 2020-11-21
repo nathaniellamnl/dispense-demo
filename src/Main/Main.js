@@ -4,7 +4,7 @@ import { NavLink, Route, Switch, Redirect } from 'react-router-dom';
 import NavigationItems from './MainSideBar/NavigationItems/NavigationItems'
 import Layout from '../components/Layout/Layout'
 import classes from './Main.module.css';
-import NewPatient from '../components/Patient/NewPatient';
+import NewPatient from '../components/Patient/NewPatient/NewPatient';
 import ExistingPatient from '../components/Patient/ExisitingPatient/ExistingPatient';
 import Search from '../components/Search/Search';
 import AuthContext from '../context/auth-context';
@@ -18,41 +18,39 @@ const Main = (props) => {
                 // if (context.token) {
                 return (
                     <Layout>
-                        <div className={classes.main_container}>
-                            <menu className={classes.main_sidebar}>
-                            <NavigationItems />
-                            </menu>
-                            <div className={classes.main_content}>
+                        <main className={classes.main_container}>
+                            {/* <menu className={classes.main_sidebar}>
+                                <NavigationItems />
+                            </menu> */}
                                 <Switch>
-                                <Route
-                                    path="/patient/new"
-                                    render={props => (
-                                        <NewPatient
-                                            {...props}
-                                            routeName="/patient/new"
-                                        />
-                                    )}
-                                />
-                                 <Route
-                                    path="/patient/existing"
-                                    render={props => (
-                                        <ExistingPatient
-                                            {...props}
-                                            routeName="/patient/existing"
-                                        />
-                                    )}
-                                />
-                                <Route
-                                    path="/search"
-                                    render={props => (
-                                        <Search
-                                            {...props}
-                                        />
-                                    )}
-                                />
+                                    <Route
+                                        path="/patient/new"
+                                        render={props => (
+                                            <NewPatient
+                                                {...props}
+                                                routeName="/patient/new"
+                                            />
+                                        )}
+                                    />
+                                    <Route
+                                        path="/patient/existing"
+                                        render={props => (
+                                            <ExistingPatient
+                                                {...props}
+                                                routeName="/patient/existing"
+                                            />
+                                        )}
+                                    />
+                                    <Route
+                                        path="/search"
+                                        render={props => (
+                                            <Search
+                                                {...props}
+                                            />
+                                        )}
+                                    />
                                 </Switch>
-                            </div>
-                        </div>
+                        </main>
                     </Layout>
                 )
                 // } else {
