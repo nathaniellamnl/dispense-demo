@@ -7,7 +7,8 @@ const navigationItem = (props) => (
         {/* NavLink auto determines if it is active */}
         <NavLink
             to={props.link}
-            activeClassName={classes.active}>{props.children}</NavLink>
+            activeClassName={classes.active}>
+                 {props.children}</NavLink>
     </li>
 );
 

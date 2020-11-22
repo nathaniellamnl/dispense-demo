@@ -49,7 +49,7 @@ const ExistingPatientProfile = (props) => {
     }
 
     return (
-        <Fragment>
+        <section >
             <Header onNavHandler={onClickHandler} clickedHeader={component}/>
             <div className={classes['component-container']}>
                 {component === "personalinfo" ?
@@ -70,7 +70,7 @@ const ExistingPatientProfile = (props) => {
                     </Suspense>
                     : null}
             </div>
-        </Fragment >
+        </section>
     )
 }
 

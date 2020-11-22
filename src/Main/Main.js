@@ -1,7 +1,6 @@
 import React, { useState, Fragment } from 'react';
 import { NavLink, Route, Switch, Redirect } from 'react-router-dom';
 
-import NavigationItems from './MainSideBar/NavigationItems/NavigationItems'
 import Layout from '../components/Layout/Layout'
 import classes from './Main.module.css';
 import NewPatient from '../components/Patient/NewPatient/NewPatient';

@@ -9,11 +9,11 @@
 
 .form_container {
   padding:  2rem;
-  width: 60vw;
+  min-width: 60vw;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 5px;
-  height: 90%;
+  min-height: 70vh;
 }
 
 .info-item {

@@ -16,3 +16,8 @@
 .spacer{
     margin-left: 5px;
 }
+
+.record-container{
+    max-width: 75vw;
+    max-height: 50vh;
+}

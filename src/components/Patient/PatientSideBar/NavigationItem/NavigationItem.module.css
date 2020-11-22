@@ -13,7 +13,11 @@
 .NavigationItem a:hover,
 .NavigationItem a:active,
 .NavigationItem a.active {
-  color: #40a4c8;
+  color: rgb(171, 16, 50);
+}
+
+.spacer{
+  width: 30px;
 }
 
 

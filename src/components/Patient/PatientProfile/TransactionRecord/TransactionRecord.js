@@ -22,7 +22,7 @@ const TransactionEntry = React.lazy(() => import('./TransactionEntry/Transaction
 
 const useStyles = makeStyles({
     table: {
-        minWidth: 650,
+        minWidth: 400,
     },
 });
 
@@ -33,8 +33,6 @@ const TransactionRecord = (props) => {
     const [transactionRecord, setTransactionRecord] = useState();
     const [isDeleting, setIsDeleting] = useState(false);
     const [longestEntryLength, setLongestEntryLength] = useState(0);
-
-    // const [printEntry, setPrintEntry] = useState(false);
 
     const openEntryHandler = (transactionId) => {
         setOpenEntry({ open: true, transactionId: transactionId });
@@ -142,30 +140,34 @@ const TransactionRecord = (props) => {
 
     return (
         <Fragment>
-            {transactionRecord && transactionRecord.length === 0 ?
-                <p>The patient does not have any transaction record.</p> :
-                <Fragment>
-                    <h2>{props.patientInfo[0].caseCode + " " + props.patientInfo[0].chineseName + "(" + props.patientInfo[0].englishName + ")"}</h2>
-                    <Modal show={openEntry.open} modalClosed={closeEntryHandler}>
-                        <Suspense fallback={<div>Loading...</div>}>
-                            <TransactionEntry cancelModal={closeEntryHandler} patientId={props.patientId} transactionId={openEntry.transactionId} />
-                        </Suspense>
-                    </Modal>
-                    <Modal show={openDeleteModal.open} modalClosed={closeDeleteModalHandler}>
-                        {isDeleting ? <Loader /> :
-                            <Fragment>
-                                <p>Are you sure you want to delete this transaction entry?</p>
-                                <Button buttonNames={["Delete", "Cancel"]} action={deleteHandler} cancel={closeDeleteModalHandler} />
-                            </Fragment>}
-                    </Modal>
-                    <div className={classescss['icon-container']}>
-                        <IconButton onClick={() => openEntryHandler(null)}>
-                            <AddCircleIcon style={{ fill: "green", cursor: 'pointer' }} />
-                        </IconButton>
-                        <span>Add new entry</span>
-                    </div>
-                    <TableContainer component={Paper}>
-                        <Table className={classes.table} aria-label="simple table">
+            <div className={classescss["record-container"]}>
+                <h2>{props.patientInfo[0].caseCode + " " + props.patientInfo[0].chineseName + "(" + props.patientInfo[0].englishName + ")"}</h2>
+
+                {/* Modal pops up when clicked */}
+                <Modal show={openEntry.open} modalClosed={closeEntryHandler}>
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <TransactionEntry cancelModal={closeEntryHandler} patientId={props.patientId} transactionId={openEntry.transactionId} />
+                    </Suspense>
+                </Modal>
+                <Modal show={openDeleteModal.open} modalClosed={closeDeleteModalHandler}>
+                    {isDeleting ? <Loader /> :
+                        <Fragment>
+                            <p>Are you sure you want to delete this transaction entry?</p>
+                            <Button buttonNames={["Delete", "Cancel"]} action={deleteHandler} cancel={closeDeleteModalHandler} />
+                        </Fragment>}
+                </Modal>
+                {/*  */}
+
+                <div className={classescss['icon-container']}>
+                    <IconButton onClick={() => openEntryHandler(null)}>
+                        <AddCircleIcon style={{ fill: "green", cursor: 'pointer' }} />
+                    </IconButton>
+                    <span>Add new entry</span>
+                </div>
+                {transactionRecord && transactionRecord.length === 0 ?
+                    <p>The patient does not have any transaction record.</p> :
+                    <TableContainer component={Paper} style={{ maxHeight: 450 }}>
+                        <Table stickyHeader className={classes.table} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="center">Edit</TableCell>
@@ -182,11 +184,11 @@ const TransactionRecord = (props) => {
                             </TableHead>
                             <TableBody>
                                 {transactionRecord ?
-                                    transactionRecord.map((row) => (
-                                        <TableRow key={row._id}>
+                                    transactionRecord.map((row, index) => (
+                                        <TableRow key={row._id} style={index % 2 ? { background: "#e9e9e9" } : { background: "white" }}>
                                             <TableCell align="center">
                                                 <IconButton onClick={() => openEntryHandler(row._id)}>
-                                                    <EditIcon style={{ fill: "blue", cursor: 'pointer' }} />
+                                                    <EditIcon style={{ fill: "#1053ab", cursor: 'pointer' }} />
                                                 </IconButton>
                                                 <IconButton onClick={() => openDeleteModalHandler(row._id)}>
                                                     <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} />
@@ -194,7 +196,7 @@ const TransactionRecord = (props) => {
                                             </TableCell>
                                             <TableCell align="center">
                                                 <IconButton onClick={() => openInNewTab(row._id)}>
-                                                    <PrintIcon style={{ fill: "green", cursor: 'pointer' }} />
+                                                    <PrintIcon style={{ fill: "#ab9910", cursor: 'pointer' }} />
                                                 </IconButton>
                                             </TableCell>
                                             {[...Array(longestEntryLength)].map((x, i) =>
@@ -210,7 +212,8 @@ const TransactionRecord = (props) => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </Fragment>}
+                }
+            </div>
         </Fragment>
     )
 }

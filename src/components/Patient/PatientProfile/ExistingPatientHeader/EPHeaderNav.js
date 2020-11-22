@@ -13,7 +13,7 @@ const mainNavigation = props => {
   ];
 
   return (<nav>
-    <ul className={classes.main_nav}>
+    <ul className={classes["main-nav"]}>
       {navItems.map(item => {
          return <NavigationItem clickedHeader={props.clickedHeader} onNavHandler={props.onNavHandler} key={item.id} id={item.id} link={item.link} text={item.text} />
       })}

@@ -161,11 +161,11 @@ const PersonalInfo = (props) => {
       </section>
       <section className={classes["info-item"]}>
         <label htmlFor="age">Age:</label>
-        <input type="text" id="age" name="age" ref={age}></input>
+        <input type="number" id="age" name="age" ref={age}></input>
       </section>
       <section className={classes["info-item"]}>
         <label htmlFor="contactNumber">Contact Number:</label>
-        <input type="text" id="contactNumber" name="contactNumber" ref={contactNumber}></input>
+        <input name="phone" id="contactNumber" name="contactNumber" ref={contactNumber}></input>
       </section>
       <section className={classes["info-item"]}>
         <label htmlFor="regDate">Date of Registration</label>
