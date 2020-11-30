@@ -12,7 +12,6 @@ const transformId = (id) => {
 }
 
 const navigationItem = (props) => {
-    console.log(props.clickedHeader);
     return (
     <li className={classes.NavigationItem} onClick={()=>props.onNavHandler(props.id) }>
         <button className={props.id==props.clickedHeader?classes.active:null}>{transformId(props.id)}</button>

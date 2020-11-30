@@ -1,21 +1,22 @@
-import React, { Fragment, useEffect, useState, Suspense } from 'react';
+import React, {useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 
 import { graphqlServerUrl } from '../../../assets/String';
 import NavigationItems from '../PatientSideBar/NavigationItems';
 import classes from './ExistingPatient.module.css';
+import ExistingPatientProfile from '../PatientProfile/ExistingPatientProfile';
+import AuthContext from '../../../context/auth-context';
 
 // const PersonalInfo = React.lazy(() => import('../PersonalInfo/Personalnfo')
 // );
 
-const ExistingPatientProfile = React.lazy(() => import('../PatientProfile/ExistingPatientProfile'));
+// const ExistingPatientProfile = React.lazy(() => import('../PatientProfile/ExistingPatientProfile'));
 
 
 const Patient = (props) => {
 
     const [patientBriefInfo, setPatientBriefInfo] = useState('');
     const [isNavClick, setIsNavClick] = useState(false);
-
 
     useEffect(() => {
         const requestBody = {
@@ -30,11 +31,13 @@ const Patient = (props) => {
                  }
               `
         };
+        
         fetch(graphqlServerUrl, {
             method: 'POST',
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+ props.token
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
@@ -53,6 +56,14 @@ const Patient = (props) => {
     const onNavHandler = () => {
         setIsNavClick(true);
     }
+
+    const updateInfoHandler = (id, infoObject) => {
+        const patientBriefInfoCopy = [...patientBriefInfo];
+        const index=patientBriefInfoCopy.findIndex(ele=>ele._id === id);
+        patientBriefInfoCopy[index] = {...infoObject,_id:id};
+
+        setPatientBriefInfo(patientBriefInfoCopy);
+    }
     return (
         <div className={classes["main-container"]}>
             <div>
@@ -67,11 +78,11 @@ const Patient = (props) => {
                         exact
                         path="/patient/existing/:id"
                         render={props => (
-                            <Suspense fallback={<div>Loading...</div>}>
                                 <ExistingPatientProfile
+                                   token={props.token}
+                                    updateInfo={updateInfoHandler}
                                     {...props}
                                 />
-                            </Suspense>
                         )}
                     />
                     : null}

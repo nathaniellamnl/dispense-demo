@@ -51,7 +51,6 @@ const TransactionRecord = (props) => {
     }
 
     const deleteHandler = () => {
-
         const requestBody = {
             query: `
                  mutation DeleteTransaction($transactionId:ID!) {
@@ -69,6 +68,7 @@ const TransactionRecord = (props) => {
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+ localStorage.getItem('dispenseToken')
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
@@ -78,8 +78,9 @@ const TransactionRecord = (props) => {
         }).then(resData => {
             setIsDeleting(false);
             closeDeleteModalHandler();
+            operationHandler("delete",openDeleteModal.transactionId,null);
         }).catch(err => {
-            alert("An unexpected error occured!")
+            alert(err);
             setIsDeleting(false);
         })
     }
@@ -108,6 +109,7 @@ const TransactionRecord = (props) => {
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+ localStorage.getItem('dispenseToken')
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
@@ -138,6 +140,33 @@ const TransactionRecord = (props) => {
         // if (newWindow) newWindow.opener = null
     }
 
+    const operationHandler = (operation , id, entry) => {
+        const transactionRecordCopy = [...transactionRecord];
+       switch(operation) {
+           case "delete":
+            const indexDelete = transactionRecordCopy.findIndex(ele=> ele._id === id);
+            transactionRecordCopy.splice(indexDelete,1);
+            setTransactionRecord(transactionRecordCopy);
+            break;
+           case "update":
+            const indexUpdate = transactionRecordCopy.findIndex(ele=> ele._id === id);
+            transactionRecordCopy[indexUpdate] = {...entry};
+            transactionRecordCopy.sort((a, b)=> {
+                return new Date(b.transactionDate) - new Date(a.transactionDate);
+              })
+            setTransactionRecord(transactionRecordCopy);
+            break;
+           case "create":   
+            transactionRecordCopy.push({...entry});
+            transactionRecordCopy.sort((a, b)=> {
+                return new Date(b.transactionDate) - new Date(a.transactionDate);
+              })
+            setTransactionRecord(transactionRecordCopy);
+           break; 
+       }
+        
+    }
+
     return (
         <Fragment>
             <div className={classescss["record-container"]}>
@@ -146,17 +175,22 @@ const TransactionRecord = (props) => {
                 {/* Modal pops up when clicked */}
                 <Modal show={openEntry.open} modalClosed={closeEntryHandler}>
                     <Suspense fallback={<div>Loading...</div>}>
-                        <TransactionEntry cancelModal={closeEntryHandler} patientId={props.patientId} transactionId={openEntry.transactionId} />
+                        <TransactionEntry
+                        token={localStorage.getItem('dispenseToken')} 
+                        cancelModal={closeEntryHandler} 
+                        patientId={props.patientId} 
+                        transactionId={openEntry.transactionId} 
+                        entryChangeHandler ={operationHandler} 
+                        />
                     </Suspense>
                 </Modal>
                 <Modal show={openDeleteModal.open} modalClosed={closeDeleteModalHandler}>
                     {isDeleting ? <Loader /> :
                         <Fragment>
-                            <p>Are you sure you want to delete this transaction entry?</p>
+                            <p style={{fontSize: "large"}}>Are you sure you want to delete this transaction entry?</p>
                             <Button buttonNames={["Delete", "Cancel"]} action={deleteHandler} cancel={closeDeleteModalHandler} />
                         </Fragment>}
                 </Modal>
-                {/*  */}
 
                 <div className={classescss['icon-container']}>
                     <IconButton onClick={() => openEntryHandler(null)}>

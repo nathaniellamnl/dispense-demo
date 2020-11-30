@@ -1,24 +1,25 @@
-import React, { useState, Fragment } from 'react';
-import { NavLink, Route, Switch, Redirect } from 'react-router-dom';
+import React, { Fragment } from 'react';
+import { Route, Switch, Redirect } from 'react-router-dom';
 
 import Layout from '../components/Layout/Layout'
 import classes from './Main.module.css';
 import NewPatient from '../components/Patient/NewPatient/NewPatient';
 import ExistingPatient from '../components/Patient/ExisitingPatient/ExistingPatient';
-import Search from '../components/Search/Search';
-import AuthContext from '../context/auth-context';
 
 
 const Main = (props) => {
 
     return (
-        <AuthContext.Consumer>
-            {(context) => {
-                // if (context.token) {
-                return (
-                    <Layout>
-                        <main className={classes.main_container}>
-                            {/* <menu className={classes.main_sidebar}>
+        <Fragment>
+            {/* <AuthContext.Consumer> */}
+            {/* {(context) => {
+                if (context.token) { */}
+            {
+                localStorage.getItem("dispenseToken")!=null && localStorage.getItem("dispenseToken")!="null"?
+                    (
+                        <Layout>
+                            <main className={classes.main_container}>
+                                {/* <menu className={classes.main_sidebar}>
                                 <NavigationItems />
                             </menu> */}
                                 <Switch>
@@ -27,6 +28,7 @@ const Main = (props) => {
                                         render={props => (
                                             <NewPatient
                                                 {...props}
+                                                token={localStorage.getItem("dispenseToken")}
                                                 routeName="/patient/new"
                                             />
                                         )}
@@ -35,28 +37,21 @@ const Main = (props) => {
                                         path="/patient/existing"
                                         render={props => (
                                             <ExistingPatient
+                                                token={localStorage.getItem("dispenseToken")}
                                                 {...props}
                                                 routeName="/patient/existing"
                                             />
                                         )}
                                     />
-                                    <Route
-                                        path="/search"
-                                        render={props => (
-                                            <Search
-                                                {...props}
-                                            />
-                                        )}
-                                    />
                                 </Switch>
-                        </main>
-                    </Layout>
-                )
-                // } else {
-                //     return <Redirect to='/signin' />
-                // }
-            }}
-        </AuthContext.Consumer>
+                            </main>
+                        </Layout>
+                    )
+                    : <Redirect to='/signin' />
+            }
+            {/* }} */}
+            {/* </AuthContext.Consumer> */}
+        </Fragment>
     )
 }
 

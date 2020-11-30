@@ -1,19 +1,18 @@
 import React, { Fragment, useReducer, Suspense } from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
-import { PDFViewer } from '@react-pdf/renderer';
 
 import Main from './Main/Main';
 import LoginPage from './auth/Signin';
-// import SignupPage from './auth/Signup';
 import AuthContext from './context/auth-context';
-const SignupPage = React.lazy(() => import('./auth/Signup'));
 const PrintEntry = React.lazy(() => import('./components/Patient/PatientProfile/TransactionRecord/PrintTransaction/PrintTransaction'));
 
 const authStateReducer = (currentAuthState, action) => {
   switch (action.type) {
     case 'Login':
+      localStorage.setItem("dispenseToken",action.token);
       return { ...currentAuthState, token: action.token, userId: action.userId };
     case 'Logout':
+      localStorage.removeItem("dispenseToken");
       return { ...currentAuthState, token: null, userId: null };
     default:
       throw new Error('Should not get there!');
@@ -45,21 +44,10 @@ const App = props => {
           <main>
             <Switch>
               <Route
-                path="/signup"
-                render={props => (
-                  <Suspense fallback={<div>Loading...</div>}>
-                    <SignupPage
-                      {...props} />
-                  </Suspense>
-                )}
-              />
-              <Route
                 path="/signin"
                 render={props => (
                   <LoginPage
                     {...props}
-                  // onSignup={this.signupHandler}
-                  // loading={this.state.authLoading}
                   />
                 )}
               />
@@ -67,9 +55,7 @@ const App = props => {
               path="/print"
                 render={props => (
                   <Suspense fallback={<div>Loading...</div>}>
-                    {/* <PDFViewer width="100%" height="100%" {...props}> */}
                       <PrintEntry/>
-                    {/* </PDFViewer> */}
                   </Suspense>
                 )}
               />
@@ -78,8 +64,6 @@ const App = props => {
                 render={props => (
                   <Main
                     {...props}
-                  // onLogin={this.loginHandler}
-                  // loading={this.state.authLoading}
                   />
                 )}
               />

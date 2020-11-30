@@ -9,13 +9,15 @@
     background-color: rgb(236,236,236);
     max-width: 20vw;
     min-height: 85vh;
+    max-height: 88vh;
+    /* padding-bottom: 5px; */
     width: 280px;
     overflow: auto;
     border-right: 1px rgb(224,225,224) solid;
 }
 
 .sidebar-header {
-    margin-top: 4rem;
+    margin-top: 0;
     padding-top: 2rem;
     margin-bottom: 0;
     background-color: rgb(236,236,236);
@@ -25,7 +27,7 @@
 }
 
 
-.main-content{
-    margin-top: 4rem;
-}
+/* .main-content{
+    margin-top: rem0;
+} */
 

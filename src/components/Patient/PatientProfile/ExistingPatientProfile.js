@@ -1,10 +1,10 @@
-import React, { Fragment, Suspense, useEffect, useState } from 'react';
+import React, { Fragment, Suspense, useEffect, useState, useContext } from 'react';
 
 import Header from '../PatientProfile/ExistingPatientHeader/EPHeaderNav';
 import classes from './ExistingPatientProfile.module.css';
 import {graphqlServerUrl} from '../../../assets/String';
 const TransactionRecord = React.lazy(() => import('./TransactionRecord/TransactionRecord'));
-const PersonalInfo = React.lazy(() => import('../PersonalInfo/Personalnfo'));
+const PersonalInfo = React.lazy(() => import('../PersonalInfo/PersonalInfo'));
 
 const ExistingPatientProfile = (props) => {
 
@@ -28,6 +28,7 @@ const ExistingPatientProfile = (props) => {
             body: JSON.stringify(requestBody),
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': 'Bearer '+ localStorage.getItem("dispenseToken")
             }
           }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
@@ -39,7 +40,7 @@ const ExistingPatientProfile = (props) => {
             setPatientInfo([...resData.data.patients, {_id:window.location.pathname.split('/')[3]}]);
     
           }).catch(err => {
-            console.log(err);
+            alert("An unexpected error occured!");
           })
     
       }, [window.location.pathname]);
@@ -55,6 +56,8 @@ const ExistingPatientProfile = (props) => {
                 {component === "personalinfo" ?
                     <Suspense fallback={<h1>loading...</h1>}>
                         <PersonalInfo
+                            token={localStorage.getItem("dispenseToken")}
+                            updateInfo={props.updateInfo}
                             {...props}
                             routeName="/patient/existing"
                         />
@@ -63,6 +66,7 @@ const ExistingPatientProfile = (props) => {
                 {component === "transactionrecord" ?
                     <Suspense fallback={<h1>loading...</h1>}>
                         <TransactionRecord
+                        token={localStorage.getItem("dispenseToken")}
                         patientInfo={patientInfo}
                         patientId={window.location.pathname.split('/')[3]}
                             {...props}

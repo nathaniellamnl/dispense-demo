@@ -1,22 +1,22 @@
 .Toolbar {
     height: 4rem;
     width: 100%;
-    position: fixed;
+    position: relative;
     top: 0;
     left: 0;
     background: rgb(171, 16, 50);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
     box-sizing: border-box;
-    z-index: 90;
+    z-index: 50;
 }
 
-.Toolbar nav {
+/* .Toolbar nav {
     height: 100%;
-}
+} */
 
 /* .Logo {
     height: 80%;
@@ -29,6 +29,8 @@
 } */
 
 .circle {
+    cursor: pointer;
+    margin-right: 30px;
     width: 3rem;
     height: 3rem;
     border-radius: 1.5rem;
@@ -39,3 +41,38 @@
     background: rgb(41,98, 255);
   }
   
+  /* .logout {
+      position: fixed;
+      top: 3rem;
+      right: 5px;
+      cursor: pointer;
+      background-color:rgb(238,240,239);
+      border-radius: 2px;
+      box-sizing: border-box;
+      z-index: 100;
+      padding: 3px;
+  } */
+
+  .logout {
+    position: absolute;
+    top: 100%;
+    right:15px;
+    width: 80px;
+    z-index: 200;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14);
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  li {
+    padding: 5px;
+  }
+  
+  li:hover {
+    background-color: rgba(0, 0, 0, 0.14);
+    cursor: pointer;
+  }

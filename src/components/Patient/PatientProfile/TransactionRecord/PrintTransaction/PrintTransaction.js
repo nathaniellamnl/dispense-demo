@@ -128,6 +128,7 @@ const PrintTransaction = (props) => {
       body: JSON.stringify(requestBody),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+ localStorage.getItem("dispenseToken")
       }
     }).then(res => {
       if (res.status !== 200 && res.status !== 201) {

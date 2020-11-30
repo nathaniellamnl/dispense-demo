@@ -75,6 +75,7 @@ const calculate = (items, quantities) => {
         for (const drug of drugChart) {
             if (drug.name === items[i] && quantities) {
                 amount += drug.price * quantities[i];
+                break;
             }
         }
     }
@@ -136,6 +137,7 @@ const TransactionEntry = (props) => {
                 body: JSON.stringify(requestBody),
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+ localStorage.getItem("dispenseToken")
                 }
             }).then(res => {
                 if (res.status !== 200 && res.status !== 201) {
@@ -236,9 +238,7 @@ const TransactionEntry = (props) => {
                        amount: $amount,
                        remark:$remark
                      }
-               ) {
-                  transactionDate
-              }
+               ) 
             }
          `
         }
@@ -261,6 +261,7 @@ const TransactionEntry = (props) => {
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+ localStorage.getItem("dispenseToken")
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
@@ -268,14 +269,22 @@ const TransactionEntry = (props) => {
             }
             return res.json();
         }).then(resData => {
-            //close modal and display data in transaction record
-            setIsLoading(false);
-            props.cancelModal();
+            if (resData.errors) {
+                alert("An unexpected error occured!");
+            } else {
+                //close modal and display data in transaction record
+                setIsLoading(false);
+                props.cancelModal();
+                if(props.transactionId){
+                    props.entryChangeHandler("update", props.transactionId, {...purchaseState, transactionDate:new Date(purchaseState.transactionDate).toISOString()} );
+                } else {
+                    props.entryChangeHandler("create", null, {...purchaseState, _id: resData.data.createTransaction ,transactionDate:new Date(purchaseState.transactionDate).toISOString()});
+                }
+            }
         }).catch(err => {
             setIsLoading(false);
             alert("An unexpected error occured.");
         })
-
     }
 
     const cancelErrors = () => {

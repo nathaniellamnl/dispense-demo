@@ -29,7 +29,7 @@ const NavigationItems = () => {
                 <ul className={classes.NavigationItems_child}>
                     {child}
                 </ul>
-                <NavigationItem link="/search">Search</NavigationItem>
+                {/* <NavigationItem link="/search">Search</NavigationItem> */}
             </ul>
         </div>
     )

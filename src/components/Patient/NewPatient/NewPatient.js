@@ -1,7 +1,7 @@
 import React from 'react';
 
 import classes from './NewPatient.module.css';
-import PersonalInfo from '../PersonalInfo/Personalnfo';
+import PersonalInfo from '../PersonalInfo/PersonalInfo';
 import image from '../../../assets/Images/Pill.jpg'
 
 // const AsyncPersonInfo = asyncComponent(()=> {
@@ -16,7 +16,7 @@ const Patient = (props) => {
                 {/* image */}
             </div>
             <div className={classes["personal-info-container"]}>
-                <PersonalInfo routeName="/patient/new" />
+                <PersonalInfo routeName="/patient/new" token={props.token}/>
             </div>
         </div>
     )

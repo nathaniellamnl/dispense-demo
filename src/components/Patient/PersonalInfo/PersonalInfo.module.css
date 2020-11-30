@@ -7,7 +7,7 @@
     font: 1rem 'Fira Sans', sans-serif;
 } */
 
-.form_container {
+.form-container {
   padding:  2rem;
   min-width: 60vw;
   display: grid;
@@ -33,7 +33,7 @@ button {
   border: 1px solid #3b0062;
   color: #3b0062;
   background: none;
-  padding: 0;
+  padding: 5px;
   cursor: pointer;
   text-transform: uppercase;
   text-decoration: none;
@@ -106,4 +106,13 @@ button:active {
   color: blue;
   text-decoration: underline;
   cursor: pointer;
+}
+
+ .error{
+  border: 1px solid #f44336;
+}
+
+.success-text{
+  text-align: center;
+  font-size: large;
 }
