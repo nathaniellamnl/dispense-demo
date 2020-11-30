@@ -144,7 +144,7 @@ export default function SignIn(props) {
               </div>
               <Box mt={8}>
               </Box>
-              <p>(For demo purpose)You can use test@test.com as the email and 1234596 as the password</p>
+              <p>(For demo purpose)You can use test@test.com as the email and 123456 as the password</p>
             </Container>
           )
         } else {
