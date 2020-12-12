@@ -1,4 +1,4 @@
-import React, { Fragment, useReducer, Suspense } from 'react';
+import React, { Fragment, useReducer, useEffect,Suspense } from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 import Main from './Main/Main';
@@ -23,6 +23,10 @@ const authStateReducer = (currentAuthState, action) => {
 const App = props => {
 
   const [authState, dispatch] = useReducer(authStateReducer, {});
+  
+  useEffect(() => {
+    document.title = "Dispense"
+ }, []);
 
   const login = (token, userId, tokenExpiration) => {
     dispatch({ type: 'Login', token: token, userId: userId });

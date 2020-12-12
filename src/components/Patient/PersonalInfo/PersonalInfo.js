@@ -56,7 +56,7 @@ const PersonalInfo = (props) => {
         body: JSON.stringify(requestBody),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer '+ localStorage.getItem('dispenseToken')
+          'Authorization': 'Bearer ' + localStorage.getItem('dispenseToken')
         }
       }).then(res => {
         if (res.status !== 200 && res.status !== 201) {
@@ -167,7 +167,7 @@ const PersonalInfo = (props) => {
       body: JSON.stringify(requestBody),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+ localStorage.getItem('dispenseToken')
+        'Authorization': 'Bearer ' + localStorage.getItem('dispenseToken')
       }
     }).then(res => {
       if (res.status !== 200 && res.status !== 201) {
@@ -229,7 +229,7 @@ const PersonalInfo = (props) => {
 
   return (
     <Fragment>
-      {isLoading ? <Loader /> :
+      {isLoading ? <div className={classes["form-container"]}> <Loader /> </div> :
         <form className={classes["form-container"]} onSubmit={onSubmitHandler}>
           <Modal show={showUploadSuccess} modalClosed={closeModalHandler}>
             <div className={classes["success-text"]}>

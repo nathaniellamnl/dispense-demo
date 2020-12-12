@@ -23,7 +23,7 @@ const Toolbar = (props) => {
     }
 
     return (
-        <div header className={classes.Toolbar}>
+        <div  className={classes.Toolbar}>
             {/* < header className={classes.Toolbar} > */}
             <IconButton onClick={props.drawerToggleClicked}>
                 <MenuIcon style={{ fill: "white", cursor: 'pointer' }} />

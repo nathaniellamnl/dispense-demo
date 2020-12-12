@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 
 import { graphqlServerUrl } from '../../../assets/String';
@@ -6,6 +6,7 @@ import NavigationItems from '../PatientSideBar/NavigationItems';
 import classes from './ExistingPatient.module.css';
 import ExistingPatientProfile from '../PatientProfile/ExistingPatientProfile';
 import AuthContext from '../../../context/auth-context';
+import Loader from '../../Loader/Loader';
 
 // const PersonalInfo = React.lazy(() => import('../PersonalInfo/Personalnfo')
 // );
@@ -17,6 +18,7 @@ const Patient = (props) => {
 
     const [patientBriefInfo, setPatientBriefInfo] = useState('');
     const [isNavClick, setIsNavClick] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const requestBody = {
@@ -31,25 +33,26 @@ const Patient = (props) => {
                  }
               `
         };
-        
+
+        setIsLoading(true);
         fetch(graphqlServerUrl, {
             method: 'POST',
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+ props.token
+                'Authorization': 'Bearer ' + props.token
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
                 throw new Error("Failed");
 
             }
-
             return res.json();
         }).then(resData => {
             setPatientBriefInfo([...resData.data.patients]);
-
+            setIsLoading(false);
         }).catch(err => {
+            setIsLoading(false);
         })
     }, [])
 
@@ -59,8 +62,8 @@ const Patient = (props) => {
 
     const updateInfoHandler = (id, infoObject) => {
         const patientBriefInfoCopy = [...patientBriefInfo];
-        const index=patientBriefInfoCopy.findIndex(ele=>ele._id === id);
-        patientBriefInfoCopy[index] = {...infoObject,_id:id};
+        const index = patientBriefInfoCopy.findIndex(ele => ele._id === id);
+        patientBriefInfoCopy[index] = { ...infoObject, _id: id };
 
         setPatientBriefInfo(patientBriefInfoCopy);
     }
@@ -69,7 +72,8 @@ const Patient = (props) => {
             <div>
                 <p className={classes['sidebar-header']}>Patient List</p>
                 <nav className={classes['sidebar']}>
-                    <NavigationItems patientBriefInfo={patientBriefInfo} click={onNavHandler} />
+                {isLoading ? <Loader /> :
+                    <NavigationItems patientBriefInfo={patientBriefInfo} click={onNavHandler} />}
                 </nav>
             </div>
             <div className={classes["main-content"]}>
@@ -78,11 +82,11 @@ const Patient = (props) => {
                         exact
                         path="/patient/existing/:id"
                         render={props => (
-                                <ExistingPatientProfile
-                                   token={props.token}
-                                    updateInfo={updateInfoHandler}
-                                    {...props}
-                                />
+                            <ExistingPatientProfile
+                                token={props.token}
+                                updateInfo={updateInfoHandler}
+                                {...props}
+                            />
                         )}
                     />
                     : null}
