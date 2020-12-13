@@ -5,6 +5,7 @@ import Layout from '../components/Layout/Layout'
 import classes from './Main.module.css';
 import NewPatient from '../components/Patient/NewPatient/NewPatient';
 import ExistingPatient from '../components/Patient/ExisitingPatient/ExistingPatient';
+import DrugInfo from '../components/DrugInfo/DrugInfo';
 
 
 const Main = (props) => {
@@ -40,6 +41,15 @@ const Main = (props) => {
                                                 token={localStorage.getItem("dispenseToken")}
                                                 {...props}
                                                 routeName="/patient/existing"
+                                            />
+                                        )}
+                                    />
+                                       <Route
+                                        path="/druginfo"
+                                        render={props => (
+                                            <DrugInfo
+                                                token={localStorage.getItem("dispenseToken")}
+                                                {...props}
                                             />
                                         )}
                                     />
