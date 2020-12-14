@@ -7,10 +7,14 @@ const useStyles = makeStyles(theme => ({
         '& thead th': {
             fontWeight: '600',
             color: '#ffffff',
-            backgroundColor: '#f5073b'
+            backgroundColor: '#f5073b',
+            align: 'left',
+            width: '100'
         },
         "& tbody td": {
-            fontWeight: '300'
+            fontWeight: '300',
+            align: 'left',
+            width: '100'
         },
         '& tbody tr:hover': {
             backgroundColor: "#fffbf2",
@@ -30,7 +34,7 @@ export default function useTable(records, headCells, filterFn) {
     const [orderBy, setOrderBy] = useState();
 
     const TblContainer = props => (
-        <Table className={classes.table}>
+        <Table stickyHeader className={classes.table}>
             {props.children}
         </Table>
     )
