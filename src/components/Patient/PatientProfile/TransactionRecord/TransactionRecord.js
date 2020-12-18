@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, Suspense } from 'react';
 import useTable from '../../../../UI/Table/useTable';
 import { makeStyles } from '@material-ui/core/styles';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@material-ui/core';
+import {  TableBody, TableCell, TableRow, Paper, IconButton } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import PrintIcon from '@material-ui/icons/Print';
 import EditIcon from '@material-ui/icons/Edit';
@@ -34,19 +34,21 @@ const TransactionRecord = (props) => {
     });
 
     const headCells = [
-        { id: "edit", label: "Edit" },
-        { id: 'print', label: "print" },
+        { id: "edit", label: "Edit", disableSorting: true },
+        { id: 'print', label: "print", disableSorting: true },
         [...Array(longestEntryLength)].map((x, i) => {
+            let drugItemKey = "drugItem" + (+(i + 1));
+            let drugQtyKey = "drugQty" + (+(i + 1));
             return {
-                drugItem: {
-                    id: "drugItem" + i, label: "Drug Item " + i
+                [drugItemKey]: {
+                    id: "drugItem" + (+(i + 1)), label: "Drug Item " + (+(i + 1))
                 },
-                drugQuantity: {
-                    id: "drugQty" + i, label: "Drug Qty " + i
+                [drugQtyKey]: {
+                    id: "drugQty" + (+(i + 1)), label: "Drug Qty " + (+(i + 1))
                 }
             }
         }),
-        { id: "paidAmount", label: "Paid Amount" },
+        { id: "amount", label: "Paid Amount" },
         { id: "transactionDate", label: "Transaction Date" }
     ];
 
@@ -140,6 +142,9 @@ const TransactionRecord = (props) => {
             }
             return res.json();
         }).then(resData => {
+            resData.data.transactions.map(ele => {
+                ele.amount = +ele.amount;
+            })
             setTransactionRecord(resData.data.transactions);
 
         }).catch(err => {
@@ -224,52 +229,38 @@ const TransactionRecord = (props) => {
                 {transactionRecord && transactionRecord.length === 0 ?
                     <p>The patient does not have any transaction record.</p> :
                     <Paper>
-                        <TableContainer component={Paper} style={{ maxHeight: 450 }}>
-                            <Table stickyHeader className={classes.table} aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell align="center">Edit</TableCell>
-                                        <TableCell align="center">Print</TableCell>
-                                        {[...Array(longestEntryLength)].map((x, i) =>
-                                            <Fragment key={i}>
-                                                <TableCell align="right">Drug&nbsp;Item&nbsp;{i + 1}</TableCell>
-                                                <TableCell align="right">Drug&nbsp;Item&nbsp;{i + 1}&nbsp;Qty</TableCell>
-                                            </Fragment>
-                                        )}
-                                        <TableCell align="right">Paid&nbsp;Amount&nbsp;</TableCell>
-                                        <TableCell align="right">Transaction&nbsp;Date&nbsp;</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {transactionRecord ?
-                                        transactionRecord.map((row, index) => (
-                                            <TableRow key={row._id} style={index % 2 ? { background: "#e9e9e9" } : { background: "white" }}>
-                                                <TableCell align="center">
-                                                    <IconButton onClick={() => openEntryHandler(row._id)}>
-                                                        <EditIcon style={{ fill: "#1053ab", cursor: 'pointer' }} />
-                                                    </IconButton>
-                                                    <IconButton onClick={() => openDeleteModalHandler(row._id)}>
-                                                        <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} />
-                                                    </IconButton>
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <IconButton onClick={() => openInNewTab(row._id)}>
-                                                        <PrintIcon style={{ fill: "#ab9910", cursor: 'pointer' }} />
-                                                    </IconButton>
-                                                </TableCell>
-                                                {[...Array(longestEntryLength)].map((x, i) =>
-                                                    <Fragment key={i}>
-                                                        <TableCell align="right">{i >= row.drugs ? null : row.drugs[i]}</TableCell>
-                                                        <TableCell align="right">{i >= row.quantities ? null : row.quantities[i]}</TableCell>
-                                                    </Fragment>
-                                                )}
-                                                <TableCell align="right">{row.amount}</TableCell>
-                                                <TableCell align="right">{row.transactionDate.substring(0, 10)}</TableCell>
-                                            </TableRow>
-                                        )) : null}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <TblContainer>
+                            <TblHead />
+                            <TableBody>
+                                {transactionRecord ?
+                                    recordsAfterPaginationAndSorting().map((row, index) => (
+                                        <TableRow key={row._id} style={index % 2 ? { background: "#e9e9e9" } : { background: "white" }}>
+                                            <TableCell align="left" width="20%">
+                                                <IconButton onClick={() => openEntryHandler(row._id)}>
+                                                    <EditIcon style={{ fill: "#1053ab", cursor: 'pointer' }} />
+                                                </IconButton>
+                                                <IconButton onClick={() => openDeleteModalHandler(row._id)}>
+                                                    <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} />
+                                                </IconButton>
+                                            </TableCell>
+                                            <TableCell align="left" width="20%">
+                                                <IconButton onClick={() => openInNewTab(row._id)}>
+                                                    <PrintIcon style={{ fill: "#ab9910", cursor: 'pointer' }} />
+                                                </IconButton>
+                                            </TableCell>
+                                            {[...Array(longestEntryLength)].map((x, i) =>
+                                                <Fragment key={i}>
+                                                    <TableCell align="left" width="10%">{i >= row.drugs ? null : row.drugs[i]}</TableCell>
+                                                    <TableCell align="left" width="10%">{i >= row.quantities ? null : row.quantities[i]}</TableCell>
+                                                </Fragment>
+                                            )}
+                                            <TableCell align="left" width="20%">{row.amount}</TableCell>
+                                            <TableCell align="left" width="20%">{row.transactionDate.substring(0, 10)}</TableCell>
+                                        </TableRow>
+                                    )) : null}
+                            </TableBody>
+                        </TblContainer>
+                        <TblPagination />
                     </Paper>
                 }
             </div>

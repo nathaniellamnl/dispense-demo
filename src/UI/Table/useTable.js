@@ -57,20 +57,20 @@ export default function useTable(records, headCells, filterFn) {
                                 ele.map((innerEle, i) => {
                                     return (
                                         <Fragment>
-                                            <TableCell key={innerEle["drugItem" + i].id}
-                                                sortDirection={orderBy === innerEle["drugItem" + i].id ? order : false}>
-                                                {ele.label}
+                                            <TableCell key={innerEle["drugItem" + (+(i+1))].id}
+                                                sortDirection={orderBy === innerEle["drugItem" + (+(i+1))].id ? order : false}>
+                                                {innerEle["drugItem" + (+(i+1))].label}
                                             </TableCell>
-                                            <TableCell key={innerEle["drugQty" + i]}
-                                                sortDirection={orderBy === innerEle["drugQty" + i] ? order : false}>
-                                                {ele.label}
+                                            <TableCell key={innerEle["drugQty" + (+(i+1))]}
+                                                sortDirection={orderBy === innerEle["drugQty" + (+(i+1))] ? order : false}>
+                                                {innerEle["drugQty" + (+(i+1))].label}
                                             </TableCell>
                                         </Fragment>
                                     )
                                 })
                                 :
                                 <TableCell key={ele.id}
-                                    sortDirection={orderBy === ele.id ? order : false}>
+                                    sortDirection={orderBy === ele.id ? order : false} align="left" width="220">
                                     {ele.disableSorting ? ele.label :
                                         <TableSortLabel
                                             active={orderBy === ele.id}

@@ -1,7 +1,9 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { Paper, TableBody, TableCell, TableRow,makeStyles } from '@material-ui/core';
+import { Paper, TableBody, TableCell, TableRow, IconButton } from '@material-ui/core';
 
 import { graphqlServerUrl } from '../../assets/String';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete'
 import Loader from '../../UI/Loader/Loader';
 import useTable from '../../UI/Table/useTable';
 import classes from './DrugInfo.module.css';
@@ -10,7 +12,7 @@ const headCells = [
     { id: "name", label: "Drug Item" },
     { id: "price", label: "Price" },
     { id: "quantity", label: "Available Quantity" },
-    { id: "edit", label: "Edit", disableSorting:true }
+    { id: "edit", label: "Edit", disableSorting: true }
 ]
 
 const DrugInfo = (props) => {
@@ -97,11 +99,16 @@ const DrugInfo = (props) => {
                     <TableBody>
                         {recordsAfterPaginationAndSorting().map(ele => (
                             <TableRow key={ele._id} >
-                                <TableCell>{ele.name}</TableCell>
-                                <TableCell>{ele.price}</TableCell>
-                                <TableCell>{ele.quantity}</TableCell>
-                                <TableCell>
-                                   
+                                <TableCell align="left" width="220">{ele.name}</TableCell>
+                                <TableCell align="left" width="220">{ele.price}</TableCell>
+                                <TableCell align="left" width="220">{ele.quantity}</TableCell>
+                                <TableCell align="left" width="220">
+                                    <IconButton >
+                                        <EditIcon style={{ fill: "#1053ab", cursor: 'pointer' }} />
+                                    </IconButton>
+                                    <IconButton >
+                                        <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} />
+                                    </IconButton>
                                 </TableCell>
                             </TableRow>
                         ))}
