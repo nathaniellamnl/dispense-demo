@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect } from 'react';
 
 import classes from './Modal.module.css';
-import Backdrop from '../Backdrop/Backdrop';
+import Backdrop from '../../UI/Backdrop/Backdrop';
 import CloseIcon from '@material-ui/icons/Close';
 import { IconButton } from '@material-ui/core';
 

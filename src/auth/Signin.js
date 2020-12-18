@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import AuthContext from '../context/auth-context';
-import Loader from '../components/Loader/Loader';
+import Loader from '../UI/Loader/Loader';
 
 const useStyles = makeStyles((theme) => ({
   paper: {

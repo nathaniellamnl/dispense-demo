@@ -1,8 +1,8 @@
 import React, { Fragment, useState, useEffect } from 'react';
 
 
-import Modal from '../../Modal/Modal';
-import Loader from '../../Loader/Loader';
+import Modal from '../../../UI/Modal/Modal';
+import Loader from '../../../UI/Loader/Loader';
 import cloneDeep from 'lodash/cloneDeep';
 import { graphqlServerUrl } from '../../../assets/String';
 import classes from './PersonalInfo.module.css';

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles, Table, TableCell, TableHead, TablePagination, TableRow, TableSortLabel } from '@material-ui/core';
+import { Fragment } from 'react';
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -52,16 +53,32 @@ export default function useTable(records, headCells, filterFn) {
                 <TableRow>
                     {
                         headCells.map(ele => (
-                            <TableCell key={ele.id}
-                                sortDirection={orderBy === ele.id ? order : false}>
-                                {ele.disableSorting ? ele.label :
-                                    <TableSortLabel
-                                        active={orderBy === ele.id}
-                                        direction={orderBy === ele.id ? order : "asc"}
-                                        onClick={() => { handleSortRequest(ele.id) }} >
-                                        {ele.label}
-                                    </TableSortLabel>}
-                            </TableCell>
+                            Array.isArray(ele) ?
+                                ele.map((innerEle, i) => {
+                                    return (
+                                        <Fragment>
+                                            <TableCell key={innerEle["drugItem" + i].id}
+                                                sortDirection={orderBy === innerEle["drugItem" + i].id ? order : false}>
+                                                {ele.label}
+                                            </TableCell>
+                                            <TableCell key={innerEle["drugQty" + i]}
+                                                sortDirection={orderBy === innerEle["drugQty" + i] ? order : false}>
+                                                {ele.label}
+                                            </TableCell>
+                                        </Fragment>
+                                    )
+                                })
+                                :
+                                <TableCell key={ele.id}
+                                    sortDirection={orderBy === ele.id ? order : false}>
+                                    {ele.disableSorting ? ele.label :
+                                        <TableSortLabel
+                                            active={orderBy === ele.id}
+                                            direction={orderBy === ele.id ? order : "asc"}
+                                            onClick={() => { handleSortRequest(ele.id) }} >
+                                            {ele.label}
+                                        </TableSortLabel>}
+                                </TableCell>
                         ))
                     }
                 </TableRow>

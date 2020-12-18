@@ -2,13 +2,9 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Paper, TableBody, TableCell, TableRow,makeStyles } from '@material-ui/core';
 
 import { graphqlServerUrl } from '../../assets/String';
-import Modal from '../../UI/Modal/Modal';
-import Loader from '../Loader/Loader';
+import Loader from '../../UI/Loader/Loader';
 import useTable from '../../UI/Table/useTable';
 import classes from './DrugInfo.module.css';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { IconButton } from '@material-ui/core';
 
 const headCells = [
     { id: "name", label: "Drug Item" },
@@ -26,8 +22,6 @@ const DrugInfo = (props) => {
         fn: items => items,
         value: null
     });
-
-    const [openDeleteModal, setOpenDeleteModal] = useState({ open: false, transactionId: null });
 
     const {
         TblContainer,
@@ -87,14 +81,6 @@ const DrugInfo = (props) => {
         })
     }
 
-    const editHandler = e => {
-
-    }
-
-    const deleteHandler = e => {
-        
-    }
-
 
     return (
         <div className={classes.Layout}>
@@ -105,13 +91,6 @@ const DrugInfo = (props) => {
                 cols="160"
                 onChange={handleSearch}
             />
-            <Modal show={openDeleteModal.open} modalClosed={closeDeleteModalHandler}>
-                    {isDeleting ? <Loader /> :
-                        <Fragment>
-                            <p style={{fontSize: "large"}}>Are you sure you want to delete this transaction entry?</p>
-                            <Button buttonNames={["Delete", "Cancel"]} action={deleteHandler} cancel={closeDeleteModalHandler} />
-                        </Fragment>}
-            </Modal>
             <Paper>
                 <TblContainer>
                     <TblHead />
@@ -122,12 +101,7 @@ const DrugInfo = (props) => {
                                 <TableCell>{ele.price}</TableCell>
                                 <TableCell>{ele.quantity}</TableCell>
                                 <TableCell>
-                                    <IconButton onClick={() => editHandler(row._id)}>
-                                        <EditIcon />
-                                    </IconButton>
-                                    <IconButton onClick={() => deleteHandler(ele._id)}>
-                                        <DeleteIcon />
-                                    </IconButton>
+                                   
                                 </TableCell>
                             </TableRow>
                         ))}

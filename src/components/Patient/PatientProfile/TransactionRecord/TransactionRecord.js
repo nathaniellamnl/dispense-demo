@@ -1,22 +1,16 @@
 import React, { Fragment, useState, useEffect, Suspense } from 'react';
+import useTable from '../../../../UI/Table/useTable';
 import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import PrintIcon from '@material-ui/icons/Print';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { IconButton } from '@material-ui/core';
 
-import Loader from '../../../../components/Loader/Loader';
-import Button from '../../../Button/Button';
+import Loader from '../../../../UI/Loader/Loader';
+import Button from '../../../../UI/Button/Button';
 import { graphqlServerUrl } from '../../../../assets/String';
-import Modal from '../../../Modal/Modal';
+import Modal from '../../../../UI/Modal/Modal';
 import classescss from './TransactionRecord.module.css';
 const TransactionEntry = React.lazy(() => import('./TransactionEntry/TransactionEntry'));
 
@@ -27,12 +21,41 @@ const useStyles = makeStyles({
 });
 
 const TransactionRecord = (props) => {
+
     const classes = useStyles();
     const [openEntry, setOpenEntry] = useState({ open: false, transactionId: null });
     const [openDeleteModal, setOpenDeleteModal] = useState({ open: false, transactionId: null });
     const [transactionRecord, setTransactionRecord] = useState();
     const [isDeleting, setIsDeleting] = useState(false);
     const [longestEntryLength, setLongestEntryLength] = useState(0);
+    const [filterFn, setFilterFn] = useState({
+        fn: items => items,
+        value: null
+    });
+
+    const headCells = [
+        { id: "edit", label: "Edit" },
+        { id: 'print', label: "print" },
+        [...Array(longestEntryLength)].map((x, i) => {
+            return {
+                drugItem: {
+                    id: "drugItem" + i, label: "Drug Item " + i
+                },
+                drugQuantity: {
+                    id: "drugQty" + i, label: "Drug Qty " + i
+                }
+            }
+        }),
+        { id: "paidAmount", label: "Paid Amount" },
+        { id: "transactionDate", label: "Transaction Date" }
+    ];
+
+    const {
+        TblContainer,
+        TblHead,
+        TblPagination,
+        recordsAfterPaginationAndSorting
+    } = useTable(transactionRecord, headCells, filterFn);
 
     const openEntryHandler = (transactionId) => {
         setOpenEntry({ open: true, transactionId: transactionId });
@@ -68,7 +91,7 @@ const TransactionRecord = (props) => {
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+ localStorage.getItem('dispenseToken')
+                'Authorization': 'Bearer ' + localStorage.getItem('dispenseToken')
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
@@ -78,7 +101,7 @@ const TransactionRecord = (props) => {
         }).then(resData => {
             setIsDeleting(false);
             closeDeleteModalHandler();
-            operationHandler("delete",openDeleteModal.transactionId,null);
+            operationHandler("delete", openDeleteModal.transactionId, null);
         }).catch(err => {
             alert(err);
             setIsDeleting(false);
@@ -109,7 +132,7 @@ const TransactionRecord = (props) => {
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+ localStorage.getItem('dispenseToken')
+                'Authorization': 'Bearer ' + localStorage.getItem('dispenseToken')
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
@@ -140,31 +163,31 @@ const TransactionRecord = (props) => {
         // if (newWindow) newWindow.opener = null
     }
 
-    const operationHandler = (operation , id, entry) => {
+    const operationHandler = (operation, id, entry) => {
         const transactionRecordCopy = [...transactionRecord];
-       switch(operation) {
-           case "delete":
-            const indexDelete = transactionRecordCopy.findIndex(ele=> ele._id === id);
-            transactionRecordCopy.splice(indexDelete,1);
-            setTransactionRecord(transactionRecordCopy);
-            break;
-           case "update":
-            const indexUpdate = transactionRecordCopy.findIndex(ele=> ele._id === id);
-            transactionRecordCopy[indexUpdate] = {...entry};
-            transactionRecordCopy.sort((a, b)=> {
-                return new Date(b.transactionDate) - new Date(a.transactionDate);
-              })
-            setTransactionRecord(transactionRecordCopy);
-            break;
-           case "create":   
-            transactionRecordCopy.push({...entry});
-            transactionRecordCopy.sort((a, b)=> {
-                return new Date(b.transactionDate) - new Date(a.transactionDate);
-              })
-            setTransactionRecord(transactionRecordCopy);
-           break; 
-       }
-        
+        switch (operation) {
+            case "delete":
+                const indexDelete = transactionRecordCopy.findIndex(ele => ele._id === id);
+                transactionRecordCopy.splice(indexDelete, 1);
+                setTransactionRecord(transactionRecordCopy);
+                break;
+            case "update":
+                const indexUpdate = transactionRecordCopy.findIndex(ele => ele._id === id);
+                transactionRecordCopy[indexUpdate] = { ...entry };
+                transactionRecordCopy.sort((a, b) => {
+                    return new Date(b.transactionDate) - new Date(a.transactionDate);
+                })
+                setTransactionRecord(transactionRecordCopy);
+                break;
+            case "create":
+                transactionRecordCopy.push({ ...entry });
+                transactionRecordCopy.sort((a, b) => {
+                    return new Date(b.transactionDate) - new Date(a.transactionDate);
+                })
+                setTransactionRecord(transactionRecordCopy);
+                break;
+        }
+
     }
 
     return (
@@ -176,18 +199,18 @@ const TransactionRecord = (props) => {
                 <Modal show={openEntry.open} modalClosed={closeEntryHandler}>
                     <Suspense fallback={<div>Loading...</div>}>
                         <TransactionEntry
-                        token={localStorage.getItem('dispenseToken')} 
-                        cancelModal={closeEntryHandler} 
-                        patientId={props.patientId} 
-                        transactionId={openEntry.transactionId} 
-                        entryChangeHandler ={operationHandler} 
+                            token={localStorage.getItem('dispenseToken')}
+                            cancelModal={closeEntryHandler}
+                            patientId={props.patientId}
+                            transactionId={openEntry.transactionId}
+                            entryChangeHandler={operationHandler}
                         />
                     </Suspense>
                 </Modal>
                 <Modal show={openDeleteModal.open} modalClosed={closeDeleteModalHandler}>
                     {isDeleting ? <Loader /> :
                         <Fragment>
-                            <p style={{fontSize: "large"}}>Are you sure you want to delete this transaction entry?</p>
+                            <p style={{ fontSize: "large" }}>Are you sure you want to delete this transaction entry?</p>
                             <Button buttonNames={["Delete", "Cancel"]} action={deleteHandler} cancel={closeDeleteModalHandler} />
                         </Fragment>}
                 </Modal>
@@ -200,52 +223,54 @@ const TransactionRecord = (props) => {
                 </div>
                 {transactionRecord && transactionRecord.length === 0 ?
                     <p>The patient does not have any transaction record.</p> :
-                    <TableContainer component={Paper} style={{ maxHeight: 450 }}>
-                        <Table stickyHeader className={classes.table} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="center">Edit</TableCell>
-                                    <TableCell align="center">Print</TableCell>
-                                    {[...Array(longestEntryLength)].map((x, i) =>
-                                        <Fragment key={i}>
-                                            <TableCell align="right">Drug&nbsp;Item&nbsp;{i + 1}</TableCell>
-                                            <TableCell align="right">Drug&nbsp;Item&nbsp;{i + 1}&nbsp;Qty</TableCell>
-                                        </Fragment>
-                                    )}
-                                    <TableCell align="right">Paid&nbsp;Amount&nbsp;</TableCell>
-                                    <TableCell align="right">Transaction&nbsp;Date&nbsp;</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {transactionRecord ?
-                                    transactionRecord.map((row, index) => (
-                                        <TableRow key={row._id} style={index % 2 ? { background: "#e9e9e9" } : { background: "white" }}>
-                                            <TableCell align="center">
-                                                <IconButton onClick={() => openEntryHandler(row._id)}>
-                                                    <EditIcon style={{ fill: "#1053ab", cursor: 'pointer' }} />
-                                                </IconButton>
-                                                <IconButton onClick={() => openDeleteModalHandler(row._id)}>
-                                                    <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} />
-                                                </IconButton>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <IconButton onClick={() => openInNewTab(row._id)}>
-                                                    <PrintIcon style={{ fill: "#ab9910", cursor: 'pointer' }} />
-                                                </IconButton>
-                                            </TableCell>
-                                            {[...Array(longestEntryLength)].map((x, i) =>
-                                                <Fragment key={i}>
-                                                    <TableCell align="right">{i >= row.drugs ? null : row.drugs[i]}</TableCell>
-                                                    <TableCell align="right">{i >= row.quantities ? null : row.quantities[i]}</TableCell>
-                                                </Fragment>
-                                            )}
-                                            <TableCell align="right">{row.amount}</TableCell>
-                                            <TableCell align="right">{row.transactionDate.substring(0, 10)}</TableCell>
-                                        </TableRow>
-                                    )) : null}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    <Paper>
+                        <TableContainer component={Paper} style={{ maxHeight: 450 }}>
+                            <Table stickyHeader className={classes.table} aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="center">Edit</TableCell>
+                                        <TableCell align="center">Print</TableCell>
+                                        {[...Array(longestEntryLength)].map((x, i) =>
+                                            <Fragment key={i}>
+                                                <TableCell align="right">Drug&nbsp;Item&nbsp;{i + 1}</TableCell>
+                                                <TableCell align="right">Drug&nbsp;Item&nbsp;{i + 1}&nbsp;Qty</TableCell>
+                                            </Fragment>
+                                        )}
+                                        <TableCell align="right">Paid&nbsp;Amount&nbsp;</TableCell>
+                                        <TableCell align="right">Transaction&nbsp;Date&nbsp;</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {transactionRecord ?
+                                        transactionRecord.map((row, index) => (
+                                            <TableRow key={row._id} style={index % 2 ? { background: "#e9e9e9" } : { background: "white" }}>
+                                                <TableCell align="center">
+                                                    <IconButton onClick={() => openEntryHandler(row._id)}>
+                                                        <EditIcon style={{ fill: "#1053ab", cursor: 'pointer' }} />
+                                                    </IconButton>
+                                                    <IconButton onClick={() => openDeleteModalHandler(row._id)}>
+                                                        <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} />
+                                                    </IconButton>
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <IconButton onClick={() => openInNewTab(row._id)}>
+                                                        <PrintIcon style={{ fill: "#ab9910", cursor: 'pointer' }} />
+                                                    </IconButton>
+                                                </TableCell>
+                                                {[...Array(longestEntryLength)].map((x, i) =>
+                                                    <Fragment key={i}>
+                                                        <TableCell align="right">{i >= row.drugs ? null : row.drugs[i]}</TableCell>
+                                                        <TableCell align="right">{i >= row.quantities ? null : row.quantities[i]}</TableCell>
+                                                    </Fragment>
+                                                )}
+                                                <TableCell align="right">{row.amount}</TableCell>
+                                                <TableCell align="right">{row.transactionDate.substring(0, 10)}</TableCell>
+                                            </TableRow>
+                                        )) : null}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Paper>
                 }
             </div>
         </Fragment>

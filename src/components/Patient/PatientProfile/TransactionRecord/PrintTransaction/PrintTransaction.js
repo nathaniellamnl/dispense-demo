@@ -5,7 +5,7 @@ import drugChart from '../../../../../assets/DrugChart';
 import logo from '../../../../../assets/Images/Pharmacy.jpg'
 import font from '../../../../../assets/Fonts/wangHanZou.ttf';
 import { graphqlServerUrl } from '../../../../../assets/String';
-import Loader from '../../../../../components/Loader/Loader';
+import Loader from '../../../../../UI/Loader/Loader';
 
 
 Font.register({ family: 'WangHanZou', src: font })

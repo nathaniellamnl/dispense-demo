@@ -9,7 +9,7 @@ import { graphqlServerUrl } from '../../../../../assets/String';
 import classes from './TransactionEntry.module.css';
 import drugNames from '../../../../../assets/DrugNames';
 import drugChart from '../../../../../assets/DrugChart';
-import Loader from '../../../../../components/Loader/Loader';
+import Loader from '../../../../../UI/Loader/Loader';
 
 const drugPurchaseReducer = (currentPurchaseState, action) => {
     switch (action.type) {

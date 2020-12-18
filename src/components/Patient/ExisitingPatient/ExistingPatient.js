@@ -6,7 +6,7 @@ import NavigationItems from '../PatientSideBar/NavigationItems';
 import classes from './ExistingPatient.module.css';
 import ExistingPatientProfile from '../PatientProfile/ExistingPatientProfile';
 import AuthContext from '../../../context/auth-context';
-import Loader from '../../Loader/Loader';
+import Loader from '../../../UI/Loader/Loader';
 
 // const PersonalInfo = React.lazy(() => import('../PersonalInfo/Personalnfo')
 // );
