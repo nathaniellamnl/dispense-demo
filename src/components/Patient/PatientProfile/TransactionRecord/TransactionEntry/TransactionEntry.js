@@ -11,79 +11,95 @@ import classes from './TransactionEntry.module.css';
 // import drugChart from '../../../../../assets/DrugChart';
 import Loader from '../../../../../UI/Loader/Loader';
 
-const drugPurchaseReducer = (currentPurchaseState, action) => {
-    switch (action.type) {
-        case 'Initialize':
-            return {
-                ...currentPurchaseState,
-                ...action.transaction,
-            }
-        case 'Submit':
-            return {
-                ...currentPurchaseState,
-                amount: action.amount,
-            };
-        case 'Calculate':
-            return {
-                ...currentPurchaseState,
-                quantities: action.quantities,
-                drugs: action.drugs,
-                amount: calculate(action.drugs, action.quantities),
-            }
-        case 'Update':
-            return {
-                ...action.currentState
-            }
-        case 'AddItem':
-            const newQtyAdd = [...currentPurchaseState.quantities];
-            newQtyAdd.push("");
-            const newDrugsAdd = [...currentPurchaseState.drugs];
-            newDrugsAdd.push("");
-            return {
-                ...currentPurchaseState,
-                quantities: newQtyAdd,
-                drugs: newDrugsAdd,
-            }
-        case 'DeleteItem':
-            const newQtyRemove = [...currentPurchaseState.quantities];
-            newQtyRemove.splice(action.index, 1);
-            const newDrugsRemove = [...currentPurchaseState.drugs];
-            newDrugsRemove.splice(action.index, 1);
-
-            return {
-                ...currentPurchaseState,
-                quantities: newQtyRemove,
-                drugs: newDrugsRemove,
-                amount: calculate(newDrugsRemove, newQtyRemove)
-            }
-        case 'Reset':
-            return {
-                transactionDate: "",
-                drugs: [""],
-                quantities: [""],
-                remark: "",
-                amount: "",
-            }
-        default:
-            throw new Error('Should not get there!');
-    }
-};
-
-const calculate = (items, quantities) => {
-    let amount = 0;
-    for (let i = 0; i < items.length; i++) {
-        for (const drug of drugChart) {
-            if (drug.name === items[i] && quantities) {
-                amount += drug.price * quantities[i];
-                break;
-            }
-        }
-    }
-    return amount;
-}
-
-
 const TransactionEntry = (props) => {
+    
+    const [fieldErrors, setFieldErrors] = useState({
+        transactionDate: false,
+        drugs: [false],
+        quantities: [false],
+        amount: false,
+    })
+    const [isLoading, setIsLoading] = useState(true);
+    const [drugInfo, setDrugInfo] = useState([{
+        _id: "",
+        name: "",
+        price: "",
+        quantity: ""
+    }]);
+    
+    const calculate = (items, quantities) => {
+        
+        let amount = 0;
+        console.log("Calculate: " +drugInfo);
+        for (let i = 0; i < items.length; i++) {
+                for (const drug of drugInfo) {
+                    if (drug.name === items[i] && quantities) {
+                        amount += drug.price * quantities[i];
+                        break;
+                    }
+                
+            } 
+        }
+        return amount;
+    }
+
+    const drugPurchaseReducer = (currentPurchaseState, action) => {
+        switch (action.type) {
+            case 'Initialize':
+                return {
+                    ...currentPurchaseState,
+                    ...action.transaction,
+                }
+            case 'Submit':
+                return {
+                    ...currentPurchaseState,
+                    amount: action.amount,
+                };
+            case 'Calculate':
+                return {
+                    ...currentPurchaseState,
+                    quantities: action.quantities,
+                    drugs: action.drugs,
+                    amount: calculate(action.drugs, action.quantities),
+                }
+            case 'Update':
+                return {
+                    ...action.currentState
+                }
+            case 'AddItem':
+                const newQtyAdd = [...currentPurchaseState.quantities];
+                newQtyAdd.push("");
+                const newDrugsAdd = [...currentPurchaseState.drugs];
+                newDrugsAdd.push("");
+                return {
+                    ...currentPurchaseState,
+                    quantities: newQtyAdd,
+                    drugs: newDrugsAdd,
+                }
+            case 'DeleteItem':
+                const newQtyRemove = [...currentPurchaseState.quantities];
+                newQtyRemove.splice(action.index, 1);
+                const newDrugsRemove = [...currentPurchaseState.drugs];
+                newDrugsRemove.splice(action.index, 1);
+
+                return {
+                    ...currentPurchaseState,
+                    quantities: newQtyRemove,
+                    drugs: newDrugsRemove,
+                    amount: calculate(newDrugsRemove, newQtyRemove)
+                }
+            case 'Reset':
+                return {
+                    transactionDate: "",
+                    drugs: [""],
+                    quantities: [""],
+                    remark: "",
+                    amount: "",
+                }
+            default:
+                throw new Error('Should not get there!');
+        }
+    };
 
     const [purchaseState, dispatch] = useReducer(drugPurchaseReducer,
         {
@@ -94,22 +110,9 @@ const TransactionEntry = (props) => {
             amount: "",
         });
 
-    const [fieldErrors, setFieldErrors] = useState({
-        transactionDate: false,
-        drugs: [false],
-        quantities: [false],
-        amount: false,
-    })
-    const [isLoading, setIsLoading] = useState(true);
-    const [drugInfo, setDrugInfo] =useState({
-        _id:"",
-        name:"",
-        price:"",
-        quantity:""
-    })
+  
 
     const addDrugItemHandler = () => {
-
         dispatch({ type: "AddItem" });
     }
 
@@ -148,7 +151,7 @@ const TransactionEntry = (props) => {
                 body: JSON.stringify(requestBody),
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer '+ localStorage.getItem("dispenseToken")
+                    'Authorization': 'Bearer ' + localStorage.getItem("dispenseToken")
                 }
             }).then(res => {
                 if (res.status !== 200 && res.status !== 201) {
@@ -161,7 +164,7 @@ const TransactionEntry = (props) => {
                     type: 'Initialize',
                     transaction: { ...res.data.transactions[0], transactionDate: res.data.transactions[0].transactionDate.substring(0, 10) }
                 });
-                setDrugInfo(res.data.drugs[0]);
+                setDrugInfo(res.data.drugs);
                 setIsLoading(false);
 
             }).catch(err => {
@@ -169,9 +172,38 @@ const TransactionEntry = (props) => {
             })
 
         } else {
-            //set to initial value
-            dispatch({ type: 'Reset' });
-            setIsLoading(false);
+            //set to initial value   
+            setIsLoading(true);
+            const requestBody = {
+                query: `
+                     query {
+                       drugs {
+                           _id
+                           name
+                           price
+                       }
+                     }
+                  `
+            };
+            fetch(graphqlServerUrl, {
+                method: 'POST',
+                body: JSON.stringify(requestBody),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem("dispenseToken")
+                }
+            }).then(res => {
+                if (res.status !== 200 && res.status !== 201) {
+                    throw new Error("Failed");
+                }
+                return res.json();
+            }).then(res => {
+                setDrugInfo(res.data.drugs);
+                dispatch({ type: 'Reset' });
+                setIsLoading(false);
+            }).catch(err => {
+                setIsLoading(false);
+            })
         }
         setFieldErrors({
             transactionDate: false,
@@ -273,7 +305,7 @@ const TransactionEntry = (props) => {
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+ localStorage.getItem("dispenseToken")
+                'Authorization': 'Bearer ' + localStorage.getItem("dispenseToken")
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
@@ -290,10 +322,10 @@ const TransactionEntry = (props) => {
                 console.log(resData.data.createTransaction);
                 setIsLoading(false);
                 props.cancelModal();
-                if(props.transactionId){
-                    props.entryChangeHandler("update", props.transactionId, {...purchaseState, transactionDate:new Date(purchaseState.transactionDate).toISOString()} );
+                if (props.transactionId) {
+                    props.entryChangeHandler("update", props.transactionId, { ...purchaseState, transactionDate: new Date(purchaseState.transactionDate).toISOString() });
                 } else {
-                    props.entryChangeHandler("create", null, {...purchaseState, _id: resData.data.createTransaction ,transactionDate:new Date(purchaseState.transactionDate).toISOString()});
+                    props.entryChangeHandler("create", null, { ...purchaseState, _id: resData.data.createTransaction, transactionDate: new Date(purchaseState.transactionDate).toISOString() });
                 }
             }
         }).catch(err => {
@@ -349,18 +381,23 @@ const TransactionEntry = (props) => {
                             <div >
                                 <Autocomplete
                                     value={purchaseState.drugs ? { name: purchaseState.drugs[i - 1] } :
-                                     { 
-                                    id:"",
-                                    name:"",
-                                    price:"",
-                                    quantity:"" }}
+                                        {
+                                            id: "",
+                                            name: "",
+                                            price: "",
+                                            quantity: ""
+                                        }}
                                     onChange={(event, value) => onAutoCompleteChange(i, value)}
                                     id={"drugItem" + i}
-                                    options={[...drugInfo, {
-                                        id:"",
-                                        name:"",
-                                        price:"",
-                                        quantity:""
+                                    options={Array.isArray(drugInfo)? [...drugInfo, {
+                                        id: "",
+                                        name: "",
+                                        price: "",
+                                        quantity: ""
+                                    }] :[{
+                                        id: "",
+                                        name: "",
+                                        price: "",
                                     }]
                                     }
                                     // options={[...drugNames, { name: "" }]}
