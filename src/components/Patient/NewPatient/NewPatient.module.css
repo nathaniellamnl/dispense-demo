@@ -1,10 +1,12 @@
 .new-patient-container{
     display: flex;
+    height: calc(100vh - 8rem);
 }
 
 .personal-info-container {
     margin-top: 4rem;
-    height: 85vh;
+    height: calc(100vh - 8rem);
+                  
 }
 
 .background{
@@ -13,5 +15,5 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    height: 100vh;
+    height: calc(100vh - 4rem);
 }

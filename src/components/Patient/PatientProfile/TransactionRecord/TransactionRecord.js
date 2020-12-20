@@ -22,7 +22,6 @@ const useStyles = makeStyles({
 
 const TransactionRecord = (props) => {
 
-    const classes = useStyles();
     const [openEntry, setOpenEntry] = useState({ open: false, transactionId: null });
     const [openDeleteModal, setOpenDeleteModal] = useState({ open: false, transactionId: null });
     const [transactionRecord, setTransactionRecord] = useState();
@@ -57,7 +56,7 @@ const TransactionRecord = (props) => {
         TblHead,
         TblPagination,
         recordsAfterPaginationAndSorting
-    } = useTable(transactionRecord, headCells, filterFn);
+    } = useTable(transactionRecord, headCells, filterFn,[1,2,3]);
 
     const openEntryHandler = (transactionId) => {
         setOpenEntry({ open: true, transactionId: transactionId });
@@ -142,13 +141,14 @@ const TransactionRecord = (props) => {
             }
             return res.json();
         }).then(resData => {
+            console.log(resData.data.transactions);
             resData.data.transactions.map(ele => {
                 ele.amount = +ele.amount;
             })
             setTransactionRecord(resData.data.transactions);
 
         }).catch(err => {
-
+            alert(err);
         })
     }, [props]);
 
@@ -179,20 +179,20 @@ const TransactionRecord = (props) => {
             case "update":
                 const indexUpdate = transactionRecordCopy.findIndex(ele => ele._id === id);
                 transactionRecordCopy[indexUpdate] = { ...entry };
-                transactionRecordCopy.sort((a, b) => {
-                    return new Date(b.transactionDate) - new Date(a.transactionDate);
-                })
+                // transactionRecordCopy.sort((a, b) => {
+                //     return new Date(b.transactionDate) - new Date(a.transactionDate);
+                // })
                 setTransactionRecord(transactionRecordCopy);
                 break;
             case "create":
                 transactionRecordCopy.push({ ...entry });
-                transactionRecordCopy.sort((a, b) => {
-                    return new Date(b.transactionDate) - new Date(a.transactionDate);
-                })
+                // transactionRecordCopy.sort((a, b) => {
+                //     return new Date(b.transactionDate) - new Date(a.transactionDate);
+                // })
+                console.log(transactionRecordCopy);
                 setTransactionRecord(transactionRecordCopy);
                 break;
         }
-
     }
 
     return (

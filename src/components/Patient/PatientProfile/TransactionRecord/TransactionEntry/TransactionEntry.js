@@ -7,8 +7,8 @@ import { IconButton } from '@material-ui/core';
 
 import { graphqlServerUrl } from '../../../../../assets/String';
 import classes from './TransactionEntry.module.css';
-import drugNames from '../../../../../assets/DrugNames';
-import drugChart from '../../../../../assets/DrugChart';
+// import drugNames from '../../../../../assets/DrugNames';
+// import drugChart from '../../../../../assets/DrugChart';
 import Loader from '../../../../../UI/Loader/Loader';
 
 const drugPurchaseReducer = (currentPurchaseState, action) => {
@@ -101,6 +101,12 @@ const TransactionEntry = (props) => {
         amount: false,
     })
     const [isLoading, setIsLoading] = useState(true);
+    const [drugInfo, setDrugInfo] =useState({
+        _id:"",
+        name:"",
+        price:"",
+        quantity:""
+    })
 
     const addDrugItemHandler = () => {
 
@@ -126,6 +132,11 @@ const TransactionEntry = (props) => {
                         remark
                         amount
                        }
+                       drugs {
+                           _id
+                           name
+                           price
+                       }
                      }
                   `,
                 variables: {
@@ -150,6 +161,7 @@ const TransactionEntry = (props) => {
                     type: 'Initialize',
                     transaction: { ...res.data.transactions[0], transactionDate: res.data.transactions[0].transactionDate.substring(0, 10) }
                 });
+                setDrugInfo(res.data.drugs[0]);
                 setIsLoading(false);
 
             }).catch(err => {
@@ -270,9 +282,12 @@ const TransactionEntry = (props) => {
             return res.json();
         }).then(resData => {
             if (resData.errors) {
+                setIsLoading(false);
+                console.log(resData.errors);
                 alert("An unexpected error occured!");
             } else {
                 //close modal and display data in transaction record
+                console.log(resData.data.createTransaction);
                 setIsLoading(false);
                 props.cancelModal();
                 if(props.transactionId){
@@ -318,8 +333,6 @@ const TransactionEntry = (props) => {
     }
 
     const onOtherFieldChange = (event, fieldName) => {
-        const touchedField = { ...fieldErrors[fieldName] };
-        touchedField.touched = true;
 
         dispatch({ type: 'Update', currentState: { ...purchaseState, [fieldName]: event.target.value ? event.target.value : "" } });
         cancelErrors();
@@ -335,10 +348,22 @@ const TransactionEntry = (props) => {
                         <section className={classes['section-container']}>
                             <div >
                                 <Autocomplete
-                                    value={purchaseState.drugs ? { name: purchaseState.drugs[i - 1] } : { name: "" }}
+                                    value={purchaseState.drugs ? { name: purchaseState.drugs[i - 1] } :
+                                     { 
+                                    id:"",
+                                    name:"",
+                                    price:"",
+                                    quantity:"" }}
                                     onChange={(event, value) => onAutoCompleteChange(i, value)}
                                     id={"drugItem" + i}
-                                    options={[...drugNames, { name: "" }]}
+                                    options={[...drugInfo, {
+                                        id:"",
+                                        name:"",
+                                        price:"",
+                                        quantity:""
+                                    }]
+                                    }
+                                    // options={[...drugNames, { name: "" }]}
                                     getOptionLabel={(option) => option["name"]}
                                     style={{ width: 400, height: 50 }}
                                     renderInput={(params) =>

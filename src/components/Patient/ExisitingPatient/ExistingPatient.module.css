@@ -8,7 +8,7 @@
     margin: 0 0 0 0;
     background-color: rgb(236,236,236);
     max-width: 20vw;
-    height: calc(100%-1rem); 
+    height: calc(100vh - 8rem);
     padding-bottom: 10px;
     width: 280px;
     overflow: auto;
@@ -24,9 +24,3 @@
     font-size: x-large;
     color:  rgb(171, 16, 50);
 }
-
-
-/* .main-content{
-    margin-top: rem0;
-} */
-

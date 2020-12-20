@@ -24,11 +24,11 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-export default function useTable(records, headCells, filterFn) {
+export default function useTable(records, headCells, filterFn,pages) {
 
     const classes = useStyles();
 
-    const pages = [5, 10, 15];
+    // const pages = [1,2,3];
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(pages[page]);
     const [order, setOrder] = useState();
