@@ -107,7 +107,7 @@ const DrugInfoEntry = (props) => {
                     _id: "${props.id}",
                    drugInput:{
                      name:"${drugInfo.name}",
-                     quantity:"${+drugInfo.quantity}",
+                     quantity:${+drugInfo.quantity},
                      price: ${+drugInfo.price},
                      }
                ) {
@@ -121,7 +121,7 @@ const DrugInfoEntry = (props) => {
                createDrug(
                    drugInput:{
                        name:"${drugInfo.name}",
-                       quantity:"${+drugInfo.quantity}",
+                       quantity:${+drugInfo.quantity},
                        price: ${+drugInfo.price},
                      }
                ) 

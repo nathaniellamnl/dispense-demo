@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from 'react';
 
-import classes from './Layout.module.css';
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
 import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer';
 
@@ -19,9 +18,7 @@ const Layout = (props) => {
         <Fragment>
             <Toolbar drawerToggleClicked={sideDrawerToggleHandler} />
             <SideDrawer show={showSideDrawer} closed={sideDrawerCloseHandler} />
-            {/* <main className={classes.Content}> */}
                 {props.children}
-            {/* </main> */}
         </Fragment>
     );
 }

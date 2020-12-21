@@ -1,7 +1,6 @@
 import React, { useEffect, useState, Fragment } from 'react';
 import { PDFViewer, Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer';
 
-import drugChart from '../../../../../assets/DrugChart';
 import logo from '../../../../../assets/Images/Pharmacy.jpg'
 import font from '../../../../../assets/Fonts/wangHanZou.ttf';
 import { graphqlServerUrl } from '../../../../../assets/String';
@@ -13,9 +12,7 @@ Font.registerHyphenationCallback(word => { return [word] });
 // Create styles
 const styles = StyleSheet.create({
   page: {
-    // flexDirection: 'column',
     backgroundColor: '#FFFFFF',
-    // justifyContent: 'flex-start'
   },
   header: {
     alignSelf: "center",
@@ -65,7 +62,6 @@ const styles = StyleSheet.create({
   tableCell: {
     marginVertical: 0,
     marginHorizontal: "auto",
-    // marginTop: 5,
     fontSize: 10
   },
   text__right: {
@@ -102,7 +98,7 @@ const styles = StyleSheet.create({
 // Create Document Component
 const PrintTransaction = (props) => {
   const [transaction, setTransaction] = useState();
-  // [{transactionDate: null, customerName: null}]
+
   useEffect(() => {
     const transactionId = window.location.pathname.split("/")[2]
     const requestBody = {
@@ -117,6 +113,11 @@ const PrintTransaction = (props) => {
               amount
               customerName
              }
+             drugs {
+              _id
+              name
+              price
+             }
            }
         `,
       variables: {
@@ -128,7 +129,7 @@ const PrintTransaction = (props) => {
       body: JSON.stringify(requestBody),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+ localStorage.getItem("dispenseToken")
+        'Authorization': 'Bearer ' + localStorage.getItem("dispenseToken")
       }
     }).then(res => {
       if (res.status !== 200 && res.status !== 201) {
@@ -140,11 +141,11 @@ const PrintTransaction = (props) => {
       const transaction = resData.data.transactions[0];
 
       const tranformedDrugs = [];
-
+      
       for (let i = 0; i < transaction.drugs.length; i++) {
-        for(let j = 0; j < drugChart.length; j++) {
-          if(drugChart[j].name === transaction.drugs[i]){
-            tranformedDrugs.push({ drug: transaction.drugs[i], quantity: transaction.quantities[i], price: drugChart[j].price});    
+        for (let j = 0; j < resData.data.drugs.length; j++) {
+          if (resData.data.drugs[j].name === transaction.drugs[i]) {
+            tranformedDrugs.push({ drug: transaction.drugs[i], quantity: transaction.quantities[i], price: resData.data.drugs[j].price });
             break;
           }
         }
@@ -165,8 +166,8 @@ const PrintTransaction = (props) => {
     <Fragment>
       {transaction ?
         (
-          <PDFViewer width="100%" height="1000vh" {...props}>
-            <Document> 
+          <PDFViewer width="100%" height="800" {...props}>
+            <Document>
               <Page size="A4" style={styles.page} >
                 <Image src={logo} style={styles.image} />
                 <Text style={styles.header}>Receipt</Text>
@@ -201,7 +202,7 @@ const PrintTransaction = (props) => {
                         <Text style={styles.text__right}>{drug.quantity}</Text>
                       </View>
                       <View style={styles.tableCol}>
-                        <Text style={styles.text__right}>{(+drug.price)*(+drug.quantity)}</Text>
+                        <Text style={styles.text__right}>{(+drug.price) * (+drug.quantity)}</Text>
                       </View>
                     </View>
                     )
@@ -248,8 +249,8 @@ const PrintTransaction = (props) => {
                 <Text style={styles.spacer}></Text>
               </Page>
             </Document>
-          </PDFViewer>) : <Loader/>}
-  )
+          </PDFViewer>) : <Loader />}
+  
     </Fragment>
   )
 };

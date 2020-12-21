@@ -13,11 +13,6 @@
     border-right: solid rgb(224,225,224) 3px;
 }
 
-/* @media (min-width: 500px) {
-    .SideDrawer {
-        display: none;
-    }
-} */
 
 .Open {
     transform: translateX(0);

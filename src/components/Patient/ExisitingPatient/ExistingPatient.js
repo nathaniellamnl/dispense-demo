@@ -8,11 +8,6 @@ import ExistingPatientProfile from '../PatientProfile/ExistingPatientProfile';
 import AuthContext from '../../../context/auth-context';
 import Loader from '../../../UI/Loader/Loader';
 
-// const PersonalInfo = React.lazy(() => import('../PersonalInfo/Personalnfo')
-// );
-
-// const ExistingPatientProfile = React.lazy(() => import('../PatientProfile/ExistingPatientProfile'));
-
 
 const Patient = (props) => {
 

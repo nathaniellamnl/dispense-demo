@@ -6,23 +6,19 @@ import classes from './Main.module.css';
 import NewPatient from '../components/Patient/NewPatient/NewPatient';
 import ExistingPatient from '../components/Patient/ExisitingPatient/ExistingPatient';
 import DrugInfo from '../components/DrugInfo/DrugInfo';
+import Home from '../components/Home/Home';
 
 
 const Main = (props) => {
 
     return (
+        
         <Fragment>
-            {/* <AuthContext.Consumer> */}
-            {/* {(context) => {
-                if (context.token) { */}
             {
-                localStorage.getItem("dispenseToken")!=null && localStorage.getItem("dispenseToken")!="null"?
-                    (
+                localStorage.getItem("dispenseToken") != null && localStorage.getItem("dispenseToken") != "null" ?
+                   (
                         <Layout>
                             <main className={classes.main_container}>
-                                {/* <menu className={classes.main_sidebar}>
-                                <NavigationItems />
-                            </menu> */}
                                 <Switch>
                                     <Route
                                         path="/patient/new"
@@ -44,7 +40,7 @@ const Main = (props) => {
                                             />
                                         )}
                                     />
-                                       <Route
+                                    <Route
                                         path="/druginfo"
                                         render={props => (
                                             <DrugInfo
@@ -53,14 +49,21 @@ const Main = (props) => {
                                             />
                                         )}
                                     />
+                                    <Route
+                                        path="/home"
+                                        render={props => (
+                                            <Home 
+                                            />
+                                        )}
+                                    />
+                                    <Redirect to="/home" />
                                 </Switch>
+
                             </main>
                         </Layout>
                     )
                     : <Redirect to='/signin' />
             }
-            {/* }} */}
-            {/* </AuthContext.Consumer> */}
         </Fragment>
     )
 }

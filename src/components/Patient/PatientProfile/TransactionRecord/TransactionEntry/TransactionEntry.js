@@ -7,8 +7,6 @@ import { IconButton } from '@material-ui/core';
 
 import { graphqlServerUrl } from '../../../../../assets/String';
 import classes from './TransactionEntry.module.css';
-// import drugNames from '../../../../../assets/DrugNames';
-// import drugChart from '../../../../../assets/DrugChart';
 import Loader from '../../../../../UI/Loader/Loader';
 
 const TransactionEntry = (props) => {
@@ -105,7 +103,7 @@ const TransactionEntry = (props) => {
         {
             transactionDate: "",
             drugs: [""],
-            quantities: [""],
+            quantities: [null],
             remark: "",
             amount: "",
         });
@@ -236,7 +234,7 @@ const TransactionEntry = (props) => {
             allError = allError || validateField(quantity);
             quantityErrors.push(validateField(quantity));
         }
-        // allError = allError || validateField(purchaseState.amount);
+ 
         allError = allError || validateField(purchaseState.transactionDate);
 
         if (allError) {
@@ -253,7 +251,7 @@ const TransactionEntry = (props) => {
 
         if (props.transactionId) {
             queryValue = `  
-            mutation UpdateTransaction($transactionId: ID!,$drugs: [String!]!,$quantities: [String!]! ,$id:ID!,$amount: Float!, $remark:String){
+            mutation UpdateTransaction($transactionId: ID!,$drugs: [String!]!,$quantities: [Int!]! ,$id:ID!,$amount: Float!, $remark:String){
                updateTransaction(
                     _id: $transactionId,
                    transactionInput:{
@@ -272,7 +270,7 @@ const TransactionEntry = (props) => {
 
         } else {
             queryValue = `  
-            mutation CreateTransaction($drugs: [String!]!,$quantities: [String!]! ,$id:ID!,$amount: Float!,$remark:String){
+            mutation CreateTransaction($drugs: [String!]!,$quantities: [Int!]! ,$id:ID!,$amount: Float!,$remark:String){
                createTransaction(
                    transactionInput:{
                        transactionDate: "${new Date(purchaseState.transactionDate).toISOString()}",
@@ -359,7 +357,7 @@ const TransactionEntry = (props) => {
     const onQuantityChange = (i, event) => {
 
         const currentQuantities = [...purchaseState.quantities];
-        currentQuantities[i - 1] = event.target.value ? event.target.value : "";
+        currentQuantities[i - 1] = event.target.value ? parseInt(event.target.value) : "";
         dispatch({ type: 'Calculate', drugs: purchaseState.drugs, quantities: currentQuantities });
         cancelErrors();
     }
@@ -400,7 +398,7 @@ const TransactionEntry = (props) => {
                                         price: "",
                                     }]
                                     }
-                                    // options={[...drugNames, { name: "" }]}
+                                
                                     getOptionLabel={(option) => option["name"]}
                                     style={{ width: 400, height: 50 }}
                                     renderInput={(params) =>

@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState } from 'react';
+import React, { useRef, useContext, useState, Fragment } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
 
 import { graphqlServerUrl } from '../assets/String'
@@ -13,6 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import AuthContext from '../context/auth-context';
 import Loader from '../UI/Loader/Loader';
+import logo from '../assets/Images/logo192.png';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -67,7 +68,7 @@ export default function SignIn(props) {
       body: JSON.stringify(requestBody),
       headers: {
         'Content-Type': 'application/json',
-        
+
       }
     }).then(res => {
       if (res.status !== 200 && res.status !== 201) {
@@ -82,10 +83,10 @@ export default function SignIn(props) {
           resData.data.login.userId,
           resData.data.login.tokenExpiration);
       }
-      
+
     }).catch(err => {
       setIsLoading(false);
-      alert("Incorrect email or password!"); 
+      alert("Incorrect email or password!");
     })
 
   };
@@ -95,57 +96,61 @@ export default function SignIn(props) {
       {(context) => {
         if (!context.token) {
           return (
-            <Container component="main" maxWidth="xs">
-              {isLoading? <Loader />: null}
-              <CssBaseline />
-              <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                  <LockOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                  Sign in
-        </Typography>
-                <form className={classes.form} noValidate onSubmit={submitHandler}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    inputRef={emailRef}
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
-                  />
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    inputRef={passwordRef}
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                  />
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                  >
-                    Sign In
+            <Fragment>
+              <h1 style={{ textAlign: "center" }}>Dispense Application</h1>
+              <div style={{ textAlign: "center",paddingBottom:"0", marginBottom:"0" }}>
+                <img src={logo} width="50" height="50" />
+              </div>
+              <Container component="main" maxWidth="xs">
+                {isLoading ? <Loader /> : null}
+                <CssBaseline />
+                <div className={classes.paper}>
+
+                  <Typography component="h1" variant="h5">
+                    Sign in
+                </Typography>
+                  <form className={classes.form} noValidate onSubmit={submitHandler}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      inputRef={emailRef}
+                      required
+                      fullWidth
+                      id="email"
+                      label="Email Address"
+                      name="email"
+                      autoComplete="email"
+                      autoFocus
+                    />
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      inputRef={passwordRef}
+                      required
+                      fullWidth
+                      name="password"
+                      label="Password"
+                      type="password"
+                      id="password"
+                      autoComplete="current-password"
+                    />
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      className={classes.submit}
+                    >
+                      Sign In
           </Button>
 
-                </form>
-              </div>
-              <Box mt={8}>
-              </Box>
-              <p>(For demo purpose)You can use test@test.com as the email and 123456 as the password</p>
-            </Container>
+                  </form>
+                </div>
+                <Box mt={8}>
+                </Box>
+                <p>(For demo purpose)You can use test@test.com as the email and 123456 as the password</p>
+              </Container>
+            </Fragment>
           )
         } else {
           return <Redirect to="/" />

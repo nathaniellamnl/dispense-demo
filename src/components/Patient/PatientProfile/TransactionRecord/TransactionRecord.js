@@ -165,7 +165,7 @@ const TransactionRecord = (props) => {
 
     const openInNewTab = (id) => {
         const newWindow = window.open("/print/" + id, '_blank', 'noopener,noreferrer')
-        // if (newWindow) newWindow.opener = null
+
     }
 
     const operationHandler = (operation, id, entry) => {
@@ -179,16 +179,12 @@ const TransactionRecord = (props) => {
             case "update":
                 const indexUpdate = transactionRecordCopy.findIndex(ele => ele._id === id);
                 transactionRecordCopy[indexUpdate] = { ...entry };
-                // transactionRecordCopy.sort((a, b) => {
-                //     return new Date(b.transactionDate) - new Date(a.transactionDate);
-                // })
+         
                 setTransactionRecord(transactionRecordCopy);
                 break;
             case "create":
                 transactionRecordCopy.push({ ...entry });
-                // transactionRecordCopy.sort((a, b) => {
-                //     return new Date(b.transactionDate) - new Date(a.transactionDate);
-                // })
+        
                 console.log(transactionRecordCopy);
                 setTransactionRecord(transactionRecordCopy);
                 break;

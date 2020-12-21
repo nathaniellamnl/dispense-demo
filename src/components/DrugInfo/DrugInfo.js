@@ -205,14 +205,14 @@ const DrugInfo = (props) => {
                                 <TableCell align="left" width="220" key={ele._id + "price"}>{ele.price}</TableCell>
                                 <TableCell align="left" width="220" key={ele._id + "quantity"}>{ele.quantity}</TableCell>
                                 <TableCell align="left" width="220" key={ele._id + "edit"}>
-                                    <Fragment>
+                                    <Fragment key={ele._id + "Fragment1"}>
                                         {drugs.length > 1 ?
-                                            <Fragment>
-                                                <IconButton onClick={() => openEntryHandler(ele._id)}>
-                                                    <EditIcon style={{ fill: "#1053ab", cursor: 'pointer' }} />
+                                            <Fragment key={ele._id + "Fragment2"}>
+                                                <IconButton onClick={() => openEntryHandler(ele._id)} key={ele._id + "Edit"}>
+                                                    <EditIcon style={{ fill: "#1053ab", cursor: 'pointer' }} key={ele._id + "EditIcon"}/>
                                                 </IconButton>
-                                                <IconButton onClick={() => openDeleteModalHandler(ele._id)}>
-                                                    <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} />
+                                                <IconButton onClick={() => openDeleteModalHandler(ele._id)} key={ele._id + "Delete"}>
+                                                    <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} key={ele._id +"DeleteIcon"}/>
                                                 </IconButton>
                                             </Fragment>
                                             : null
