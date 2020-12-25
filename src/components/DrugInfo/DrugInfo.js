@@ -1,13 +1,15 @@
-import React, { Fragment, useState, useEffect, Suspense } from 'react';
+import React, { Fragment, useState, useEffect, useCallback, Suspense } from 'react';
 import { Paper, TableBody, TableCell, TableRow, IconButton } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 import { graphqlServerUrl } from '../../assets/String';
 import Loader from '../../UI/Loader/Loader';
 import Button from '../../UI/Button/Button';
 import Modal from '../../UI/Modal/Modal';
+import Calculator from '../Calculator/Calculator';
 import DrugInfoEntry from '../DrugInfoEntry/DrugInfoEntry';
 import useTable from '../../UI/Table/useTable';
 import classes from './DrugInfo.module.css';
@@ -15,13 +17,15 @@ import classes from './DrugInfo.module.css';
 const headCells = [
     { id: "name", label: "Drug Item" },
     { id: "price", label: "Price" },
+    { id: "packSize", label: "Pack Size" },
     { id: "quantity", label: "Available Quantity" },
+    { id: "manufacturer", label: "Manufacturer" },
     { id: "edit", label: "Edit", disableSorting: true }
 ]
 
 const DrugInfo = (props) => {
     const [drugs, setDrugs] = useState([
-        { name: "Loading", price: "", quantity: 0 },
+        { name: "Loading", price: "", quantity: "" },
     ]);
 
     const [filterFn, setFilterFn] = useState({
@@ -30,6 +34,8 @@ const DrugInfo = (props) => {
     });
 
     const [openEntry, setOpenEntry] = useState({ open: false, id: null });
+    const [showCalculationResults, setShowCalculationResults] = useState({ calculationResults: "", show: false });
+    const [desiredQuantity, setDesiredQuantity] = useState();
     const [openDeleteModal, setOpenDeleteModal] = useState({ open: false, id: null });
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -38,7 +44,7 @@ const DrugInfo = (props) => {
         TblHead,
         TblPagination,
         recordsAfterPaginationAndSorting
-    } = useTable(drugs, headCells, filterFn,[5,10,15]);
+    } = useTable(drugs, headCells, filterFn, [5, 10, 15]);
 
     useEffect(() => {
         const requestBody = {
@@ -49,6 +55,8 @@ const DrugInfo = (props) => {
                        name 
                        price
                        quantity
+                       packSize
+                       manufacturer
                    }
                  }
               `
@@ -83,12 +91,15 @@ const DrugInfo = (props) => {
                 if (target.value === "") {
                     return items;
                 } else {
-                    console.log(items[0].name.toLowerCase());
                     return items.filter(x => x.name.toLowerCase().includes(target.value.toLowerCase()));
                 }
             },
             value: target.value
         })
+    }
+
+    const desiredQuantityHandler = (event) => {
+        setDesiredQuantity(parseInt(event.target.value));
     }
 
 
@@ -106,6 +117,79 @@ const DrugInfo = (props) => {
 
     const closeDeleteModalHandler = () => {
         setOpenDeleteModal({ open: false, id: null });
+    }
+
+    // const openCalculatorHandler = () => {
+    //     setOpenCalculator(true);
+    // }
+
+    // const closeCalculatorHandler = () => {
+    //     setOpenCalculator(false);
+    // }
+
+    const calculateBestDeal = () => {
+        const alternatives = filterFn.fn(drugs);
+        let dp = [];
+        dp.push({ id: [], quantity: 0, price: 0 });
+
+        for (let i = 1; i <= desiredQuantity; i++) {
+            let dpPrice = Number.MAX_VALUE;
+            let dpItem = alternatives[0];
+            let dpQuantity = 0;
+
+            for (let j in alternatives) {
+                if (i - alternatives[j].packSize > 0) {
+                    const price = dp[i - alternatives[j].packSize].price + alternatives[j].price;
+
+                    if (price < dpPrice) {
+                        dpPrice = price;
+                        dpItem = alternatives[j]._id;
+                        dpQuantity = alternatives[j].packSize;
+                    }
+
+                } else {
+                    if (alternatives[j].price < dpPrice) {
+                        dpPrice = alternatives[j].price;
+                        dpItem = alternatives[j]._id;
+                        dpQuantity = alternatives[j].packSize;
+                    }
+                }
+            }
+
+            let currDP;
+            if (i - dpQuantity > 0) {
+                currDP = { ...dp[i - dpQuantity] };
+                currDP.id = [...dp[i - dpQuantity].id];
+                currDP.id.push(dpItem);
+                currDP.quantity += dpQuantity;
+                currDP.price = dpPrice;
+
+            } else {
+                currDP = { id: [dpItem], quantity: parseInt(dpQuantity), price: parseInt(dpPrice) };
+            }
+            dp.push(currDP);
+        }
+
+        let drugIdCount = {};
+        for (const ele of dp[desiredQuantity].id) {
+            if (drugIdCount[ele]) {
+                drugIdCount[ele] += 1;
+            } else {
+                drugIdCount[ele] = 1;
+            }
+        }
+
+        console.log(drugIdCount);
+        const listedDrugs = filterFn.fn(drugs);
+        let calculationResultsString = "The best deal would be to buy ";
+        for (const [key, value] of Object.entries(drugIdCount)) {
+
+            const drug = listedDrugs.filter(ele => ele._id == key)[0];
+            console.log("Calculating");
+            console.log(drug);
+            calculationResultsString += drug.name + "(" + drug.manufacturer + ") " + drug.packSize + "'s x " + value + ", ";
+        }
+        setShowCalculationResults({ calculationResults: calculationResultsString.replace(/..$/,"."), show: true });
     }
 
     const deleteHandler = () => {
@@ -165,13 +249,24 @@ const DrugInfo = (props) => {
 
     return (
         <div className={classes.Layout}>
-            <textarea
-                value={filterFn.value?filterFn.value:""}
-                placeholder="Search"
-                rows="1"
-                cols="160"
-                onChange={handleSearch}
-            />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+                <textarea
+                    style={{ marginLeft: "0" }}
+                    value={filterFn.value ? filterFn.value : ""}
+                    placeholder="Search"
+                    rows="1"
+                    cols="130"
+                    onChange={handleSearch}
+                />
+                <span style={{ width: "30px" }} /> {/* sapcer*/}
+                <div style={{ display: "flex" }}>
+                    <input type="number" placeholder="Desired quantity" value={desiredQuantity} onChange={desiredQuantityHandler} />
+                    <IconButton onClick={() => calculateBestDeal()}>
+                        <AttachMoneyIcon style={{ fill: "black", cursor: 'pointer' }} />
+                    </IconButton>
+                    <span style={{ margin: "auto" }}>Calculate</span>
+                </div>
+            </div>
             <Modal show={openEntry.open} modalClosed={closeEntryHandler}>
                 <Suspense fallback={<div>Loading...</div>}>
                     <DrugInfoEntry
@@ -182,6 +277,9 @@ const DrugInfo = (props) => {
                     />
                 </Suspense>
             </Modal>
+            <Modal show={showCalculationResults.show} modalClosed={() => setShowCalculationResults({ calculationResults:"", show: false })}>
+                <p>{showCalculationResults.calculationResults}</p>
+            </Modal>
             <Modal show={openDeleteModal.open} modalClosed={closeDeleteModalHandler}>
                 {isDeleting ? <Loader /> :
                     <Fragment>
@@ -189,11 +287,16 @@ const DrugInfo = (props) => {
                         <Button buttonNames={["Delete", "Cancel"]} action={deleteHandler} cancel={closeDeleteModalHandler} />
                     </Fragment>}
             </Modal>
-            <div style={{display: "flex", alignItems:"center", justifyContent:"flex-end"}}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+
+                <span style={{ width: "50px" }} /> {/*spacer */}
                 <IconButton onClick={() => openEntryHandler(null)}>
                     <AddCircleIcon style={{ fill: "green", cursor: 'pointer' }} />
                 </IconButton>
                 <span>Add new entry</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+
             </div>
             <Paper>
                 <TblContainer>
@@ -203,16 +306,18 @@ const DrugInfo = (props) => {
                             <TableRow key={ele._id} >
                                 <TableCell align="left" width="220" key={ele._id + "name"} >{ele.name}</TableCell>
                                 <TableCell align="left" width="220" key={ele._id + "price"}>{ele.price}</TableCell>
+                                <TableCell align="left" width="220" key={ele._id + "packSize"}>{ele.packSize}</TableCell>
                                 <TableCell align="left" width="220" key={ele._id + "quantity"}>{ele.quantity}</TableCell>
+                                <TableCell align="left" width="220" key={ele._id + "manufacturer"}>{ele.manufacturer}</TableCell>
                                 <TableCell align="left" width="220" key={ele._id + "edit"}>
                                     <Fragment key={ele._id + "Fragment1"}>
                                         {drugs.length > 1 ?
                                             <Fragment key={ele._id + "Fragment2"}>
                                                 <IconButton onClick={() => openEntryHandler(ele._id)} key={ele._id + "Edit"}>
-                                                    <EditIcon style={{ fill: "#1053ab", cursor: 'pointer' }} key={ele._id + "EditIcon"}/>
+                                                    <EditIcon style={{ fill: "#1053ab", cursor: 'pointer' }} key={ele._id + "EditIcon"} />
                                                 </IconButton>
                                                 <IconButton onClick={() => openDeleteModalHandler(ele._id)} key={ele._id + "Delete"}>
-                                                    <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} key={ele._id +"DeleteIcon"}/>
+                                                    <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} key={ele._id + "DeleteIcon"} />
                                                 </IconButton>
                                             </Fragment>
                                             : null

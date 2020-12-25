@@ -9,11 +9,14 @@ import Loader from '../../UI/Loader/Loader';
 
 const DrugInfoEntry = (props) => {
 
-    const [drugInfo, setDrugInfo] = useState({ name: "", price: "", quantity: "" });
+    const [drugInfo, setDrugInfo] = useState({ name: "", price: "", packSize: "", quantity: "", manufacturer: "" });
 
     const [fieldErrors, setFieldErrors] = useState({
         name: false,
         price: false,
+        packSize: false,
+        quantity: false,
+        manufacturer: false
     })
     const [isLoading, setIsLoading] = useState(false);
 
@@ -29,6 +32,8 @@ const DrugInfoEntry = (props) => {
                         name
                         price
                         quantity
+                        packSize
+                        manufacturer
                        }
                      }
                   `,
@@ -60,13 +65,15 @@ const DrugInfoEntry = (props) => {
 
         } else {
             //set to initial value
-            setDrugInfo({ name: "", price: "", quantity: "" });
+            setDrugInfo({ name: "", price: "", quantity: "", manufacturer:"",packSize:"" });
             setIsLoading(false);
         }
         setFieldErrors({
             name: false,
             price: false,
             quantity: false,
+            manufacturer:false,
+            packSize: false
         })
     }, [props]);
 
@@ -79,9 +86,6 @@ const DrugInfoEntry = (props) => {
     }
 
     const onFieldChange = (event, fieldName) => {
-        const touchedField = { ...fieldErrors[fieldName] };
-        touchedField.touched = true;
-
         setDrugInfo({ ...drugInfo, [fieldName]: event.target.value });
     }
 
@@ -89,17 +93,30 @@ const DrugInfoEntry = (props) => {
 
         let allError = false;
 
-        allError = validateField(drugInfo.name) || validateField(drugInfo.price);
+        allError = validateField(drugInfo.name) || validateField(drugInfo.price) || validateField(drugInfo.packSize) ||
+            validateField(drugInfo.quantity) || validateField(drugInfo.manufacturer);
 
         if (allError) {
             setFieldErrors({
                 name: validateField(drugInfo.name),
                 price: validateField(drugInfo.price),
+                packSize: validateField(drugInfo.packSize),
+                quantity: validateField(drugInfo.quantity),
+                manufacturer: validateField(drugInfo.manufacturer)
             })
             return;
+        } else {
+            setFieldErrors({
+                name: false,
+                price:false,
+                packSize: false,
+                quantity: false,
+                manufacturer: false
+            })
         }
 
         let queryValue, requestBody;
+       
         if (props.id) {
             queryValue = `  
             mutation {
@@ -109,6 +126,8 @@ const DrugInfoEntry = (props) => {
                      name:"${drugInfo.name}",
                      quantity:${+drugInfo.quantity},
                      price: ${+drugInfo.price},
+                     packSize: ${+drugInfo.packSize},
+                     manufacturer: "${drugInfo.manufacturer}"
                      }
                ) {
                   name
@@ -123,6 +142,8 @@ const DrugInfoEntry = (props) => {
                        name:"${drugInfo.name}",
                        quantity:${+drugInfo.quantity},
                        price: ${+drugInfo.price},
+                       packSize: ${+drugInfo.packSize},
+                       manufacturer: "${drugInfo.manufacturer}"
                      }
                ) 
             }
@@ -156,7 +177,7 @@ const DrugInfoEntry = (props) => {
                 if (props.id) {
                     props.entryChangeHandler("update", props.id, { ...drugInfo });
                 } else {
-                    props.entryChangeHandler("create", null, { ...drugInfo, _id: resData.data.createDrug._id });
+                    props.entryChangeHandler("create", null, { ...drugInfo, _id: resData.data.createDrug });
                 }
             }
         }).catch(err => {
@@ -177,9 +198,9 @@ const DrugInfoEntry = (props) => {
         <Fragment>
             {isLoading ? <Loader /> :
                 <Fragment>
-                    <div className={classes["flex-container"]}>
+                    <div >
                         <section>
-                            <h2>Drug Item Name:</h2>
+                            <h4>Drug Item Name:</h4>
                             <textarea
                                 className={fieldErrors.name ? [classes["error"]] : null}
                                 style={{ marginLeft: "0" }}
@@ -191,7 +212,7 @@ const DrugInfoEntry = (props) => {
                                 onChange={(event) => onFieldChange(event, "name")} />
                         </section>
                         <section>
-                            <h2>Price:</h2>
+                            <h4>Price:</h4>
                             <input
                                 className={fieldErrors.price ? [classes["error"]] : null}
                                 type="number"
@@ -200,12 +221,34 @@ const DrugInfoEntry = (props) => {
                                 onChange={(event) => onFieldChange(event, "price")} />
                         </section>
                         <section>
-                            <h2>Quantity:</h2>
+                            <h4>Pack Size:</h4>
                             <input
+                                className={fieldErrors.packSize ? [classes["error"]] : null}
+                                type="number"
+                                placeholder="Pack size"
+                                value={drugInfo.packSize}
+                                onChange={(event) => onFieldChange(event, "packSize")} />
+                        </section>
+                        <section>
+                            <h4>Quantity:</h4>
+                            <input
+                                className={fieldErrors.quantity ? [classes["error"]] : null}
                                 type="number"
                                 placeholder="Quantity"
                                 value={drugInfo.quantity}
                                 onChange={(event) => onFieldChange(event, "quantity")} />
+                        </section>
+                        <section>
+                            <h4>Manufacturer:</h4>
+                            <textarea
+                                className={fieldErrors.manufacturer ? [classes["error"]] : null}
+                                style={{ marginLeft: "0" }}
+                                rows="1"
+                                cols="50"
+                                type="text"
+                                placeholder="Manufacturer"
+                                value={drugInfo.manufacturer}
+                                onChange={(event) => onFieldChange(event, "manufacturer")} />
                         </section>
                         <div />
                     </div>

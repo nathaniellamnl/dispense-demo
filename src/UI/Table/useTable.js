@@ -135,7 +135,7 @@ export default function useTable(records, headCells, filterFn,pages) {
         page={page}
         rowsPerPageOptions={pages}
         rowsPerPage={rowsPerPage}
-        count={records ? records.length : 0}
+        count={records ? filterFn.fn(records).length : 0}
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
     />)

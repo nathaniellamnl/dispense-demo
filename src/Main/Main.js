@@ -7,6 +7,7 @@ import NewPatient from '../components/Patient/NewPatient/NewPatient';
 import ExistingPatient from '../components/Patient/ExisitingPatient/ExistingPatient';
 import DrugInfo from '../components/DrugInfo/DrugInfo';
 import Home from '../components/Home/Home';
+import Calculator from '../components/Calculator/Calculator';
 
 
 const Main = (props) => {
@@ -53,6 +54,14 @@ const Main = (props) => {
                                         path="/home"
                                         render={props => (
                                             <Home 
+                                            />
+                                        )}
+                                    />
+                                     <Route
+                                        path="/calculator"
+                                        render={props => (
+                                            <Calculator
+                                            {...props} 
                                             />
                                         )}
                                     />
