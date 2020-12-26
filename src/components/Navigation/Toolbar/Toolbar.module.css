@@ -1,9 +1,14 @@
+*{
+  box-sizing: border-box;
+}
+
 .Toolbar {
     height: 4rem;
     width: 100%;
+    min-width: 300px;
     position: relative;
     top: 0;
-    left: 0;
+    /* left: 0; */
     background: rgb(171, 16, 50);
     display: flex;
     justify-content: space-between;
@@ -11,6 +16,7 @@
     padding: 0 20px;
     box-sizing: border-box;
     z-index: 50;
+    /* transition: transform 0.3s ease-out;  */
 }
 
 
@@ -51,3 +57,28 @@
     background-color: rgba(0, 0, 0, 0.14);
     cursor: pointer;
   }
+
+@media screen and (min-width: 600px) {
+    .Open {
+      left: 280px;
+      animation: grow 0.3s ease-out;
+      width: calc(100vw - 280px);
+    }
+    
+    .Closed {
+      animation: shrink 0.3s ease-out;
+    }
+}
+
+@keyframes grow {
+  0%   {width: 100vw;left:0;}
+  100% {
+    width: calc(100vw - 280px);
+    left:280px;}
+}
+
+@keyframes shrink {
+  0%   {width: calc(100vw - 280px);
+    left:280px;}
+  100% {width: 100vw;left:0;}
+}

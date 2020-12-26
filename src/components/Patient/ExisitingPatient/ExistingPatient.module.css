@@ -1,5 +1,6 @@
 .main-container{
     display: flex;
+    width: inherit;
 }
 
 .sidebar{
@@ -22,4 +23,9 @@
     text-align: center;
     font-size: x-large;
     color:  rgb(171, 16, 50);
+}
+
+.main-content{
+    width: 100%;
+    /* max-width: calc(100vw - 560px); */
 }

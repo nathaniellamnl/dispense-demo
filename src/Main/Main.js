@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 import Layout from '../components/Layout/Layout'
@@ -7,10 +7,21 @@ import NewPatient from '../components/Patient/NewPatient/NewPatient';
 import ExistingPatient from '../components/Patient/ExisitingPatient/ExistingPatient';
 import DrugInfo from '../components/DrugInfo/DrugInfo';
 import Home from '../components/Home/Home';
-import Calculator from '../components/Calculator/Calculator';
 
 
 const Main = (props) => {
+    const [shrink, setShrink] = useState(true);
+
+    const shrinkToggler = (toggle) => {
+        setShrink(toggle);
+    }
+
+    let attachedClasses;
+    if(shrink) {
+        attachedClasses = [classes["main-container"], classes.Shrink];
+    } else {
+        attachedClasses = [classes["main-container"], classes.Normal];
+    }
 
     return (
         
@@ -18,8 +29,8 @@ const Main = (props) => {
             {
                 localStorage.getItem("dispenseToken") != null && localStorage.getItem("dispenseToken") != "null" ?
                    (
-                        <Layout>
-                            <main className={classes.main_container}>
+                        <Layout shrinkToggler = {shrinkToggler}>
+                            <main className={attachedClasses.join(' ')}>
                                 <Switch>
                                     <Route
                                         path="/patient/new"
@@ -54,14 +65,6 @@ const Main = (props) => {
                                         path="/home"
                                         render={props => (
                                             <Home 
-                                            />
-                                        )}
-                                    />
-                                     <Route
-                                        path="/calculator"
-                                        render={props => (
-                                            <Calculator
-                                            {...props} 
                                             />
                                         )}
                                     />

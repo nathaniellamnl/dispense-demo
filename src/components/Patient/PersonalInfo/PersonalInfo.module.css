@@ -1,15 +1,8 @@
-/* .form_container {
-    display: flex;
-    flex-direction: column;
-} */
 
-/* .form_container label {
-    font: 1rem 'Fira Sans', sans-serif;
-} */
 
 .form-container {
   padding:  2rem;
-  min-width: 60vw;
+  width: 100% ;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 5px;
@@ -17,7 +10,7 @@
 }
 
 .info-item {
-  width: 25vw;
+  width: 100%;
   justify-self: flex-start;
   display: flex;
   flex-direction: column;
@@ -46,61 +39,6 @@ button:active {
     background: #a30000;
     color: white;
   }
-
-/* .form_container input,
-.form_container label,
-.form_container textarea {
-    margin: .4rem 0;
-}
-
-.form_container input {
-    width: 200px;
-}
-
-.form_container textarea {
-    width: 300px;
-    height: 150px;
-    resize: none;
-}
-
-.button_container {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.form_container button {
-    font: inherit;
-    border: 1px solid #3b0062;
-    color: #3b0062;
-    background: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    text-transform: uppercase;
-    text-decoration: none;
-    border-color: #a30000;
-    color: #a30000;
-  }
-  
-.form_container button:hover,
-.form_container button:active {
-    background: #a30000;
-    color: white;
-  }
-
-.spacer {
-    clear: left;
-}
-
-.info_item {
-    float: left;
-    padding: 2px 5px;
-    margin: 0px 10px;
-}
-
-.info_item label{
-    display: block;
-    font: 1rem 'Fira Sans', sans-serif;
-} */
 
 .NKDA_item {
   color: blue;

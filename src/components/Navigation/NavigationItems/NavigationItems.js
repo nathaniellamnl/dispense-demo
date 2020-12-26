@@ -5,7 +5,6 @@ import NavigationItem from './NavigationItem/NavigationItem';
 import PatientIcon from '@material-ui/icons/PermContactCalendar';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import LoyaltyIcon from '@material-ui/icons/Loyalty';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 
 const navigationItems = () => (
@@ -18,10 +17,7 @@ const navigationItems = () => (
         </NavigationItem>
         <NavigationItem link="/druginfo">
             <LoyaltyIcon style={{fontSize: 30}}/><span className={classes.spacer} />Drug Information
-        </NavigationItem>
-        <NavigationItem link="/calculator">
-            <AttachMoneyIcon style={{fontSize: 30}}/><span className={classes.spacer} />Drug Information
-        </NavigationItem>          
+        </NavigationItem>     
     </ul>
 );
 

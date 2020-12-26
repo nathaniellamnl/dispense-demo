@@ -9,7 +9,6 @@ import { graphqlServerUrl } from '../../assets/String';
 import Loader from '../../UI/Loader/Loader';
 import Button from '../../UI/Button/Button';
 import Modal from '../../UI/Modal/Modal';
-import Calculator from '../Calculator/Calculator';
 import DrugInfoEntry from '../DrugInfoEntry/DrugInfoEntry';
 import useTable from '../../UI/Table/useTable';
 import classes from './DrugInfo.module.css';
@@ -29,9 +28,14 @@ const DrugInfo = (props) => {
     ]);
 
     const [filterFn, setFilterFn] = useState({
-        fn: items => items,
-        value: null
-    });
+        fn: (items) => {
+            return items.map(x =>{
+                x.name.toLowerCase();
+                return x;
+            })
+        },
+            value: null
+        });
 
     const [openEntry, setOpenEntry] = useState({ open: false, id: null });
     const [showCalculationResults, setShowCalculationResults] = useState({ calculationResults: "", show: false });
@@ -119,14 +123,6 @@ const DrugInfo = (props) => {
         setOpenDeleteModal({ open: false, id: null });
     }
 
-    // const openCalculatorHandler = () => {
-    //     setOpenCalculator(true);
-    // }
-
-    // const closeCalculatorHandler = () => {
-    //     setOpenCalculator(false);
-    // }
-
     const calculateBestDeal = () => {
         const alternatives = filterFn.fn(drugs);
         let dp = [];
@@ -179,7 +175,6 @@ const DrugInfo = (props) => {
             }
         }
 
-        console.log(drugIdCount);
         const listedDrugs = filterFn.fn(drugs);
         let calculationResultsString = "The best deal would be to buy ";
         for (const [key, value] of Object.entries(drugIdCount)) {
@@ -189,7 +184,7 @@ const DrugInfo = (props) => {
             console.log(drug);
             calculationResultsString += drug.name + "(" + drug.manufacturer + ") " + drug.packSize + "'s x " + value + ", ";
         }
-        setShowCalculationResults({ calculationResults: calculationResultsString.replace(/..$/,"."), show: true });
+        setShowCalculationResults({ calculationResults: calculationResultsString.replace(/..$/, "."), show: true });
     }
 
     const deleteHandler = () => {
@@ -255,7 +250,7 @@ const DrugInfo = (props) => {
                     value={filterFn.value ? filterFn.value : ""}
                     placeholder="Search"
                     rows="1"
-                    cols="130"
+                    cols="65"
                     onChange={handleSearch}
                 />
                 <span style={{ width: "30px" }} /> {/* sapcer*/}
@@ -277,7 +272,7 @@ const DrugInfo = (props) => {
                     />
                 </Suspense>
             </Modal>
-            <Modal show={showCalculationResults.show} modalClosed={() => setShowCalculationResults({ calculationResults:"", show: false })}>
+            <Modal show={showCalculationResults.show} modalClosed={() => setShowCalculationResults({ calculationResults: "", show: false })}>
                 <p>{showCalculationResults.calculationResults}</p>
             </Modal>
             <Modal show={openDeleteModal.open} modalClosed={closeDeleteModalHandler}>

@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Main from './Main/Main';
 import LoginPage from './auth/Signin';
 import AuthContext from './context/auth-context';
+import sideDrawer from './components/Navigation/SideDrawer/SideDrawer';
 const PrintEntry = React.lazy(() => import('./components/Patient/PatientProfile/TransactionRecord/PrintTransaction/PrintTransaction'));
 
 const authStateReducer = (currentAuthState, action) => {

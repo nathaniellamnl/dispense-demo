@@ -1,5 +1,43 @@
-.main_container{
-    display: flex;
+* {
+  box-sizing: border-box;
 }
 
+.main-container {
+  display: flex;
+}
 
+@media screen and (min-width: 600px) {
+  .Shrink {
+    animation: shrink 0.3s ease-out;
+    margin-left: 280px;
+    width: calc(100vw - 280px);
+  }
+
+  .Normal {
+    animation: grow 0.3s ease-out;
+    margin-left: 0;
+    width:  100%;
+  }
+}
+
+@keyframes grow {
+  0% {
+    width: 100%;
+    margin-left: 280px;
+  }
+  100% {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+@keyframes shrink {
+  0% {
+    width: 100%;
+    margin-left: 0;
+  }
+  100% {
+    margin-left: 280px;
+    width: 100%;
+  }
+}

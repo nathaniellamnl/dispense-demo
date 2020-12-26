@@ -22,8 +22,15 @@ const Toolbar = (props) => {
         setShowLogout(true);
     }
 
+    let attachedClasses;
+    if(props.show) {
+        attachedClasses = [classes.Toolbar, classes.Open];
+    } else {
+        attachedClasses = [classes.Toolbar, classes.Closed];
+    }
+
     return (
-        <div  className={classes.Toolbar}>
+        <div  className={attachedClasses.join(' ')} >
             {/* < header className={classes.Toolbar} > */}
             <IconButton onClick={props.drawerToggleClicked}>
                 <MenuIcon style={{ fill: "white", cursor: 'pointer' }} />

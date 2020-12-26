@@ -6,7 +6,7 @@
 .header-container > div{
     margin: 2rem auto;
     height: 60vh;
-    width: 60vw;
+    width: calc(60%);
     background: url("../../assets/Images/Pill.jpg");
     background-position: center;
     background-repeat: no-repeat;
