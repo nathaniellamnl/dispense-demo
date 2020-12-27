@@ -28,7 +28,6 @@ const TransactionEntry = (props) => {
     const calculate = (items, quantities) => {
         
         let amount = 0;
-        console.log("Calculate: " +drugInfo);
         for (let i = 0; i < items.length; i++) {
                 for (const drug of drugInfo) {
                     if (drug.name === items[i] && quantities) {
@@ -313,11 +312,9 @@ const TransactionEntry = (props) => {
         }).then(resData => {
             if (resData.errors) {
                 setIsLoading(false);
-                console.log(resData.errors);
                 alert("An unexpected error occured!");
             } else {
                 //close modal and display data in transaction record
-                console.log(resData.data.createTransaction);
                 setIsLoading(false);
                 props.cancelModal();
                 if (props.transactionId) {

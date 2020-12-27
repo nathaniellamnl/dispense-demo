@@ -55,7 +55,6 @@ const DrugInfoEntry = (props) => {
                 return res.json();
             }).then(res => {
                 const reducedDrug = { ...res.data.drugs[0] };
-                console.log(reducedDrug);
                 setDrugInfo(reducedDrug);
                 setIsLoading(false);
 
@@ -187,13 +186,6 @@ const DrugInfoEntry = (props) => {
 
     }
 
-    const cancelErrors = () => {
-        setFieldErrors({
-            name: false,
-            price: false,
-        })
-    }
-
     return (
         <Fragment>
             {isLoading ? <Loader /> :
@@ -263,3 +255,4 @@ const DrugInfoEntry = (props) => {
 }
 
 export default DrugInfoEntry;
+

@@ -14,12 +14,6 @@ import Modal from '../../../../UI/Modal/Modal';
 import classescss from './TransactionRecord.module.css';
 const TransactionEntry = React.lazy(() => import('./TransactionEntry/TransactionEntry'));
 
-const useStyles = makeStyles({
-    table: {
-        minWidth: 400,
-    },
-});
-
 const TransactionRecord = (props) => {
 
     const [openEntry, setOpenEntry] = useState({ open: false, transactionId: null });
@@ -141,7 +135,6 @@ const TransactionRecord = (props) => {
             }
             return res.json();
         }).then(resData => {
-            console.log(resData.data.transactions);
             resData.data.transactions.map(ele => {
                 ele.amount = +ele.amount;
             })
@@ -184,8 +177,7 @@ const TransactionRecord = (props) => {
                 break;
             case "create":
                 transactionRecordCopy.push({ ...entry });
-        
-                console.log(transactionRecordCopy);
+    
                 setTransactionRecord(transactionRecordCopy);
                 break;
         }

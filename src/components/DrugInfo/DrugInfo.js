@@ -180,8 +180,6 @@ const DrugInfo = (props) => {
         for (const [key, value] of Object.entries(drugIdCount)) {
 
             const drug = listedDrugs.filter(ele => ele._id == key)[0];
-            console.log("Calculating");
-            console.log(drug);
             calculationResultsString += drug.name + "(" + drug.manufacturer + ") " + drug.packSize + "'s x " + value + ", ";
         }
         setShowCalculationResults({ calculationResults: calculationResultsString.replace(/..$/, "."), show: true });
