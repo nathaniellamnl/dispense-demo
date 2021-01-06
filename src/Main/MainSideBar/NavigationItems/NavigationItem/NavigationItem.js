@@ -8,26 +8,8 @@ const navigationItem = (props) => {
         <NavLink  to={props.link} activeClassName={classes.active}>{props.children}</NavLink>
     );
 
-    // if (props.link == "/patient") {
-    //     mainNavItem = (
-    //         <ul>
-    //             <li className={classes.NavigationItem}>
-    //                 <NavLink
-    //                     to={props.link+"/new"}
-    //                     activeClassName={classes.active}>{props.children}</NavLink>
-    //             </li>
-    //             <li className={classes.NavigationItem}>
-    //                 <NavLink
-    //                     to={props.link+"/existing"}
-    //                     activeClassName={classes.active}>{props.children}</NavLink>
-    //             </li>
-    //         </ul>
-    //     )
-    // }
-
     return (
         <li className={classes.NavigationItem}>
-            {/* NavLink auto determines if it is active */}
             {mainNavItem}
         </li>
     )

@@ -7,13 +7,12 @@
   border: 1px solid #ccc;
   box-shadow: 1px 1px 1px black;
   padding: 32px;
-  margin: 0 auto; /* Will not center vertically and won't work in IE6/7. */
+  margin: 0 auto; 
   top: 10vh;
   left: 0;
   right: 0;
   box-sizing: border-box;
   overflow: auto;
-  /* transition: transform 0.3s ease-out, opacity 0.3s ease-out; */
 }
 
 .close-icon-container{

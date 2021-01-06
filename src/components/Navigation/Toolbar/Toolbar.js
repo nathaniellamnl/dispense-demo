@@ -31,7 +31,6 @@ const Toolbar = (props) => {
 
     return (
         <div  className={attachedClasses.join(' ')} >
-            {/* < header className={classes.Toolbar} > */}
             <IconButton onClick={props.drawerToggleClicked}>
                 <MenuIcon style={{ fill: "white", cursor: 'pointer' }} />
             </IconButton>
@@ -46,8 +45,6 @@ const Toolbar = (props) => {
                     </ul>
                 </div>
             </OutsideAlerter>
-
-            {/* </header> */}
         </div>
     )
 };

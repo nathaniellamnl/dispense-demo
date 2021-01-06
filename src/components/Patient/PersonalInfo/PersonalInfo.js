@@ -136,7 +136,6 @@ const PersonalInfo = (props) => {
         `
       };
     } else {
-      //window.location.pathname.split('/')[3] patientId
       requestBody = {
         query: `
            mutation {
