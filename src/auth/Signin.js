@@ -5,7 +5,6 @@ import classesCss from './Signin.module.css';
 import { graphqlServerUrl } from '../assets/String'
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import AuthContext from '../context/auth-context';
@@ -26,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    backgroundColor:"#a30000",
   },
 }));
 
@@ -87,7 +87,7 @@ export default function SignIn(props) {
             <div className={classesCss["Background"]}>
               <div className={classesCss["Card-overlay"]}>
                   <div>
-                    <h1 className={classesCss["App-name-container"]}>Dispense Application</h1>
+                    <h1 className={classesCss["App-name"]}>Dispense</h1>
                     <div className={classesCss["Logo-container"]}>
                       <img src={logo} width="50" height="50"/>
                     </div>
@@ -95,9 +95,9 @@ export default function SignIn(props) {
                       {isLoading ? <Loader /> : null}
                       <CssBaseline />
                       <div className={classes.paper}>
-                        <Typography component="h1" variant="h5" color="#FFFFFF">
+                        <h1 className={classesCss["Header"]}>
                           Sign in
-                     </Typography>
+                     </h1>
                         <form className={classes.form} noValidate onSubmit={submitHandler}>
                           <Button
                             type="submit"
