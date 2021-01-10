@@ -211,12 +211,12 @@ const PersonalInfo = (props) => {
   const validation = (field, value) => {
     let error = false;
     if (field === "age") {
-      error = value && value.replaceAll(" ", "").length > 0 && (+value) >= 0 && (+value) <= 120 ? false : true;
+      error = value && (+value) >= 0 && (+value) <= 120 ? false : true;
     } else if (field === "contactNumber") {
       const regex = new RegExp(/^\+?[0-9]+$/);
-      error = !regex.test(value.replaceAll(" ", ""));
+      error = !regex.test(value);
     } else if (field === "caseCode") {
-      error = value.replaceAll(" ", "").length === 0 ? true : false;
+      error = value.replace(/" "/g, "").length === 0 ? true : false;
     }
     return error;
   }
@@ -225,12 +225,12 @@ const PersonalInfo = (props) => {
     setShowUploadSuccess(false);
   }
 
-  let errorMsg = <p style={{ color: "#f44336", margin: "2px" }}>Invalid</p>;
+  let errorMsg = <p className={classes.errorMsg}>Invalid</p>;
 
   return (
     <Fragment>
       {isLoading ? <div className={classes["form-container"]}> <Loader /> </div> :
-        <form className={classes["form-container"]} onSubmit={onSubmitHandler}>
+        <form className={classes["form-container"]}>
           <Modal show={showUploadSuccess} modalClosed={closeModalHandler}>
             <div className={classes["success-text"]}>
               <p>Success!</p>
@@ -351,7 +351,8 @@ const PersonalInfo = (props) => {
               onChange={(event) => onInputChangeHandler("remark", event)}></textarea>
             {personState.remark.error && personState.remark.touched ? errorMsg : null}
           </section>
-          <button type="submit" className={classes.button}>{props.routeName === "/patient/new" ? "Create" : "Update"}</button>
+          <button id="submit" type="button" onClick={onSubmitHandler} 
+           className={classes.button}>{props.routeName === "/patient/new" ? "Create" : "Update"}</button>
         </form>
       }
     </Fragment>

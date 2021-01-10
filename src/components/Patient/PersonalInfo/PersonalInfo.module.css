@@ -88,3 +88,8 @@ button:active {
   background: #a30000;
   color: white;
 }
+
+.errorMsg{
+  color: "#f44336"; 
+  margin: "2px"; 
+}
