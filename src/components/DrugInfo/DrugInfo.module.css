@@ -9,3 +9,49 @@
     padding: 15px;
     margin-left:30px ;
 }
+
+.search-container{
+    text-align: center;
+    font-family: sans-serif;
+}
+
+.search-container > textarea {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.search-container > input {
+    font-family: sans-serif;
+}
+
+.calculate-button{
+    display: block;
+    margin: 10px auto 0;
+    font: inherit;
+    border: 1px solid #3b0062;
+    color: #3b0062;
+    background: none;
+    padding: 0.5rem 1rem;
+   
+}
+
+.calculate-button:enabled{
+    cursor: pointer;
+    text-decoration: none;
+    border-color: #a30000;
+    color: #a30000;
+    
+}
+
+.calculate-button:disabled{
+    text-decoration: none;
+    border-color: lightgray;
+    color: lightgray;
+    background-color: white;
+}
+
+.calculate-button:hover:enabled,
+.calculate-button:active:enabled {
+  background: #a30000;
+  color: white;
+}

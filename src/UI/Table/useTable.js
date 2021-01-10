@@ -8,14 +8,10 @@ const useStyles = makeStyles(theme => ({
         '& thead th': {
             fontWeight: '600',
             color: '#ffffff',
-            backgroundColor: '#f5073b',
-            align: 'left',
-            width: '100'
+            backgroundColor: 'rgb(171, 16, 50)',
         },
         "& tbody td": {
             fontWeight: '300',
-            align: 'left',
-            width: '100'
         },
         '& tbody tr:hover': {
             backgroundColor: "#fffbf2",

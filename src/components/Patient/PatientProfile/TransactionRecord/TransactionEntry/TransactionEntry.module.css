@@ -11,17 +11,18 @@
 
 .section-container {
   display: flex;
-  align-items: top;
+  flex-direction: column;
   margin-top: 15px;
 }
 
 .section-chlid--vertical {
   display: flex;
   flex-direction: column;
+  max-width: 250px;
 }
 
 .spacer {
-  margin-left: 40px;
+  height: 20px;
 }
 
 .remark-container,

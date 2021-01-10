@@ -1,12 +1,12 @@
 import React, { Fragment, useState, useEffect, Suspense } from 'react';
 import useTable from '../../../../UI/Table/useTable';
-import { makeStyles } from '@material-ui/core/styles';
-import {  TableBody, TableCell, TableRow, Paper, IconButton } from '@material-ui/core';
+import { TableBody, TableCell, TableRow, Paper, IconButton } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import PrintIcon from '@material-ui/icons/Print';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 
+import useWindowDimensions from '../../../../Utilities/useWindowDimensions';
 import Loader from '../../../../UI/Loader/Loader';
 import Button from '../../../../UI/Button/Button';
 import { graphqlServerUrl } from '../../../../assets/String';
@@ -21,36 +21,53 @@ const TransactionRecord = (props) => {
     const [transactionRecord, setTransactionRecord] = useState();
     const [isDeleting, setIsDeleting] = useState(false);
     const [longestEntryLength, setLongestEntryLength] = useState(0);
+    const { width, height } = useWindowDimensions();
     const [filterFn, setFilterFn] = useState({
         fn: items => items,
         value: null
     });
 
-    const headCells = [
-        { id: "edit", label: "Edit", disableSorting: true },
-        { id: 'print', label: "print", disableSorting: true },
-        [...Array(longestEntryLength)].map((x, i) => {
-            let drugItemKey = "drugItem" + (+(i + 1));
-            let drugQtyKey = "drugQty" + (+(i + 1));
-            return {
-                [drugItemKey]: {
-                    id: "drugItem" + (+(i + 1)), label: "Drug Item " + (+(i + 1))
-                },
-                [drugQtyKey]: {
-                    id: "drugQty" + (+(i + 1)), label: "Drug Qty " + (+(i + 1))
+    let headCells;
+    if (width > 800) {
+        headCells = [
+            { id: "edit", label: "Edit", disableSorting: true },
+            { id: 'print', label: "print", disableSorting: true },
+            [...Array(longestEntryLength)].map((x, i) => {
+                let drugItemKey = "drugItem" + (+(i + 1));
+                let drugQtyKey = "drugQty" + (+(i + 1));
+                return {
+                    [drugItemKey]: {
+                        id: "drugItem" + (+(i + 1)), label: "Drug Item " + (+(i + 1))
+                    },
+                    [drugQtyKey]: {
+                        id: "drugQty" + (+(i + 1)), label: "Drug Qty " + (+(i + 1))
+                    }
                 }
-            }
-        }),
-        { id: "amount", label: "Paid Amount" },
-        { id: "transactionDate", label: "Transaction Date" }
-    ];
+            }),
+            { id: "amount", label: "Paid Amount" },
+            { id: "transactionDate", label: "Transaction Date" }
+        ];
+
+
+    } else if (width > 450) {
+        headCells = [
+            { id: "edit", label: "Edit", disableSorting: true },
+            { id: "amount", label: "Paid Amount" },
+            { id: "transactionDate", label: "Transaction Date" }
+        ];
+    } else {
+        headCells = [
+            { id: "edit", label: "Edit", disableSorting: true },
+            { id: "transactionDate", label: "Transaction Date" }
+        ]
+    }
 
     const {
         TblContainer,
         TblHead,
         TblPagination,
         recordsAfterPaginationAndSorting
-    } = useTable(transactionRecord, headCells, filterFn,[1,2,3]);
+    } = useTable(transactionRecord, headCells, filterFn, [1, 2, 3]);
 
     const openEntryHandler = (transactionId) => {
         setOpenEntry({ open: true, transactionId: transactionId });
@@ -172,12 +189,12 @@ const TransactionRecord = (props) => {
             case "update":
                 const indexUpdate = transactionRecordCopy.findIndex(ele => ele._id === id);
                 transactionRecordCopy[indexUpdate] = { ...entry };
-         
+
                 setTransactionRecord(transactionRecordCopy);
                 break;
             case "create":
                 transactionRecordCopy.push({ ...entry });
-    
+
                 setTransactionRecord(transactionRecordCopy);
                 break;
         }
@@ -231,18 +248,21 @@ const TransactionRecord = (props) => {
                                                     <DeleteIcon style={{ fill: "black", cursor: 'pointer' }} />
                                                 </IconButton>
                                             </TableCell>
-                                            <TableCell align="left" width="20%">
-                                                <IconButton onClick={() => openInNewTab(row._id)}>
-                                                    <PrintIcon style={{ fill: "#ab9910", cursor: 'pointer' }} />
-                                                </IconButton>
-                                            </TableCell>
-                                            {[...Array(longestEntryLength)].map((x, i) =>
-                                                <Fragment key={i}>
-                                                    <TableCell align="left" width="10%">{i >= row.drugs ? null : row.drugs[i]}</TableCell>
-                                                    <TableCell align="left" width="10%">{i >= row.quantities ? null : row.quantities[i]}</TableCell>
-                                                </Fragment>
-                                            )}
-                                            <TableCell align="left" width="20%">{row.amount}</TableCell>
+                                            {width > 800 &&
+                                                <Fragment>
+                                                    <TableCell align="left" width="20%">
+                                                        <IconButton onClick={() => openInNewTab(row._id)}>
+                                                            <PrintIcon style={{ fill: "#ab9910", cursor: 'pointer' }} />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                    {[...Array(longestEntryLength)].map((x, i) =>
+                                                        <Fragment key={i}>
+                                                            <TableCell align="left" width="10%">{i >= row.drugs ? null : row.drugs[i]}</TableCell>
+                                                            <TableCell align="left" width="10%">{i >= row.quantities ? null : row.quantities[i]}</TableCell>
+                                                        </Fragment>
+                                                    )}
+                                                </Fragment>}
+                                            {width > 450 ? <TableCell align="left" width="20%">{row.amount}</TableCell> : null}
                                             <TableCell align="left" width="20%">{row.transactionDate.substring(0, 10)}</TableCell>
                                         </TableRow>
                                     )) : null}

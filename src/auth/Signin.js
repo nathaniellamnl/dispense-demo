@@ -1,37 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import classesCss from './Signin.module.css';
+import classes from './Signin.module.css';
 import { graphqlServerUrl } from '../assets/String'
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import AuthContext from '../context/auth-context';
 import Loader from '../UI/Loader/Loader';
 import logo from '../assets/Images/logo192.png';
 
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    backgroundColor:"#a30000",
-  },
-}));
-
 export default function SignIn(props) {
-  const classes = useStyles();
-
   const [isLoading, setIsLoading] = useState(false);
   const authData = useContext(AuthContext);
 
@@ -84,34 +60,27 @@ export default function SignIn(props) {
       {(context) => {
         if (!context.token) {
           return (
-            <div className={classesCss["Background"]}>
-              <div className={classesCss["Card-overlay"]}>
-                  <div>
-                    <h1 className={classesCss["App-name"]}>Dispense</h1>
-                    <div className={classesCss["Logo-container"]}>
-                      <img src={logo} width="50" height="50"/>
-                    </div>
-                    <Container component="main" maxWidth="xs">
-                      {isLoading ? <Loader /> : null}
-                      <CssBaseline />
-                      <div className={classes.paper}>
-                        <h1 className={classesCss["Header"]}>
-                          Sign in
-                     </h1>
-                        <form className={classes.form} noValidate onSubmit={submitHandler}>
-                          <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            className={classes.submit}
-                          >
-                            Sign In(No Password/Email required)
-                     </Button>
-                        </form>
-                      </div>
-                    </Container>
+            <div className={classes["Background"]}>
+              <div className={classes["Card-overlay"]}>
+                <div className={classes["Container"]}>
+                  <h1 className={classes["App-name"]}>Dispense</h1>
+                  <div className={classes["Logo-container"]}>
+                    <img src={logo} width="50" height="50" />
                   </div>
+                  <h1 className={classes["Header"]}>
+                    Sign in
+                     </h1>
+                  <button
+                    type="button"
+                    onClick={submitHandler}
+                    className={classes["button"]}
+                  >
+                    Sign In(No Password/Email required)
+                  </button>
+                  <a href="https://nathanlam.site/dispense/dispense.html" target="_blank"><h2>Documentation</h2></a>
+                  
+                  {isLoading ? <Loader /> : null}
+                </div>
               </div>
             </div>
           )

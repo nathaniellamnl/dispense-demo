@@ -1,31 +1,76 @@
 .main-container{
     display: flex;
-    width: inherit;
+    width: 100%;
 }
 
 .sidebar{
+    font-size: 16px;
     box-sizing: border-box;
     margin: 0 0 0 0;
     background-color: rgb(236,236,236);
-    max-width: 20vw;
     height: calc(100vh - 8rem);
     padding-bottom: 10px;
-    width: 280px;
+    width: 200px;
     overflow: auto;
     border-right: 1px rgb(224,225,224) solid;
 }
 
 .sidebar-header {
+    width: 100%;
     margin-top: 0;
     padding-top: 2rem;
     margin-bottom: 0;
     background-color: rgb(236,236,236);
     text-align: center;
-    font-size: x-large;
     color:  rgb(171, 16, 50);
 }
 
 .main-content{
     width: 100%;
-    /* max-width: calc(100vw - 560px); */
+}
+
+.expand-icon-container{
+    display: none;
+}
+
+.patient-list-container{
+    position: static;
+}
+
+.search-patient-header{
+    text-align: center;
+
+}
+
+@media only screen and (max-width:650px) {
+
+    .main-content{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+    }
+    
+    .patient-list-container{
+        width: 0;
+        transition: width 0.3s ease-out;
+    }
+
+    .sidebar-header,
+    .sidebar{
+        display: none;
+    }
+
+    .search-patient-header{
+        width: 264px;
+        margin-top: 32px;
+        padding: 4px;
+        border: 1px solid black;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .search-patient-header:hover{
+        cursor: pointer;
+    }
 }

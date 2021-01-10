@@ -5,10 +5,8 @@
 .Toolbar {
     height: 4rem;
     width: 100%;
-    min-width: 300px;
     position: relative;
     top: 0;
-    /* left: 0; */
     background: rgb(171, 16, 50);
     display: flex;
     justify-content: space-between;
@@ -16,7 +14,6 @@
     padding: 0 20px;
     box-sizing: border-box;
     z-index: 50;
-    /* transition: transform 0.3s ease-out;  */
 }
 
 
@@ -58,7 +55,7 @@
     cursor: pointer;
   }
 
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 800px) {
     .Open {
       left: 280px;
       animation: grow 0.3s ease-out;

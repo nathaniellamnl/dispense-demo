@@ -38,7 +38,7 @@ const App = props => {
 
   return (
     <BrowserRouter>
-      <Fragment>
+      <div style={{width:"100vw", height:"100vh", padding:0, margin:0}}>
         <AuthContext.Provider value={{
           token: authState.token,
           userId: authState.userId,
@@ -75,7 +75,7 @@ const App = props => {
             </Switch>
           </main>
         </AuthContext.Provider>
-      </Fragment>
+      </div>
     </BrowserRouter>
   );
 

@@ -3,7 +3,6 @@ import { Paper, TableBody, TableCell, TableRow, IconButton } from '@material-ui/
 import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 import { graphqlServerUrl } from '../../assets/String';
 import Loader from '../../UI/Loader/Loader';
@@ -12,15 +11,7 @@ import Modal from '../../UI/Modal/Modal';
 import DrugInfoEntry from '../DrugInfoEntry/DrugInfoEntry';
 import useTable from '../../UI/Table/useTable';
 import classes from './DrugInfo.module.css';
-
-const headCells = [
-    { id: "name", label: "Drug Item" },
-    { id: "price", label: "Price" },
-    { id: "packSize", label: "Pack Size" },
-    { id: "quantity", label: "Available Quantity" },
-    { id: "manufacturer", label: "Manufacturer" },
-    { id: "edit", label: "Edit", disableSorting: true }
-]
+import useWindowDimensions from '../../Utilities/useWindowDimensions';
 
 const DrugInfo = (props) => {
     const [drugs, setDrugs] = useState([
@@ -29,19 +20,43 @@ const DrugInfo = (props) => {
 
     const [filterFn, setFilterFn] = useState({
         fn: (items) => {
-            return items.map(x =>{
+            return items.map(x => {
                 x.name.toLowerCase();
                 return x;
             })
         },
-            value: null
-        });
+        value: null
+    });
 
     const [openEntry, setOpenEntry] = useState({ open: false, id: null });
     const [showCalculationResults, setShowCalculationResults] = useState({ calculationResults: "", show: false });
     const [desiredQuantity, setDesiredQuantity] = useState();
     const [openDeleteModal, setOpenDeleteModal] = useState({ open: false, id: null });
     const [isDeleting, setIsDeleting] = useState(false);
+    const { width, height } = useWindowDimensions();
+
+    let headCells;;
+    if (width > 800) {
+        headCells = [
+            { id: "name", label: "Drug Item" },
+            { id: "price", label: "Price" },
+            { id: "packSize", label: "Pack Size" },
+            { id: "quantity", label: "Available Quantity" },
+            { id: "manufacturer", label: "Manufacturer" },
+            { id: "edit", label: "Edit", disableSorting: true }
+        ]
+    } else if (width > 450) {
+        headCells = [
+            { id: "name", label: "Drug Item" },
+            { id: "price", label: "Price" },
+            { id: "edit", label: "Edit", disableSorting: true }
+        ]
+    } else {
+        headCells = [
+            { id: "name", label: "Drug Item" },
+            { id: "edit", label: "Edit", disableSorting: true }
+        ]
+    }
 
     const {
         TblContainer,
@@ -242,23 +257,19 @@ const DrugInfo = (props) => {
 
     return (
         <div className={classes.Layout}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+            <div className={classes["search-container"]}>
                 <textarea
-                    style={{ marginLeft: "0" }}
                     value={filterFn.value ? filterFn.value : ""}
                     placeholder="Search"
                     rows="1"
-                    cols="65"
+                    cols="30"
                     onChange={handleSearch}
                 />
-                <span style={{ width: "30px" }} /> {/* sapcer*/}
-                <div style={{ display: "flex" }}>
-                    <input type="number" placeholder="Desired quantity" value={desiredQuantity} onChange={desiredQuantityHandler} />
-                    <IconButton onClick={() => calculateBestDeal()}>
-                        <AttachMoneyIcon style={{ fill: "black", cursor: 'pointer' }} />
-                    </IconButton>
-                    <span style={{ margin: "auto" }}>Calculate</span>
-                </div>
+                <div style={{ height: "20px" }}/> {/* sapcer*/}
+                <input style={{ padding: "15px" }} type="number" placeholder="Desired quantity" value={desiredQuantity} onChange={desiredQuantityHandler} />
+                <button className={classes["calculate-button"]} disabled={desiredQuantity > 0? false:true} onClick={calculateBestDeal}>
+                    Calculate
+                </button>
             </div>
             <Modal show={openEntry.open} modalClosed={closeEntryHandler}>
                 <Suspense fallback={<div>Loading...</div>}>
@@ -298,10 +309,14 @@ const DrugInfo = (props) => {
                         {recordsAfterPaginationAndSorting().map(ele => (
                             <TableRow key={ele._id} >
                                 <TableCell align="left" width="220" key={ele._id + "name"} >{ele.name}</TableCell>
-                                <TableCell align="left" width="220" key={ele._id + "price"}>{ele.price}</TableCell>
-                                <TableCell align="left" width="220" key={ele._id + "packSize"}>{ele.packSize}</TableCell>
-                                <TableCell align="left" width="220" key={ele._id + "quantity"}>{ele.quantity}</TableCell>
-                                <TableCell align="left" width="220" key={ele._id + "manufacturer"}>{ele.manufacturer}</TableCell>
+                                {width > 450 && <TableCell align="left" width="220" key={ele._id + "price"}>{ele.price}</TableCell>}
+                                {width > 800 &&
+                                    (<Fragment>
+                                        <TableCell align="left" width="220" key={ele._id + "packSize"}>{ele.packSize}</TableCell>
+                                        <TableCell align="left" width="220" key={ele._id + "quantity"}>{ele.quantity}</TableCell>
+                                        <TableCell align="left" width="220" key={ele._id + "manufacturer"}>{ele.manufacturer}</TableCell>
+                                    </Fragment>
+                                    )}
                                 <TableCell align="left" width="220" key={ele._id + "edit"}>
                                     <Fragment key={ele._id + "Fragment1"}>
                                         {drugs.length > 1 ?

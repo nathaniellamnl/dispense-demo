@@ -6,6 +6,7 @@ import Loader from '../../../UI/Loader/Loader';
 import cloneDeep from 'lodash/cloneDeep';
 import { graphqlServerUrl } from '../../../assets/String';
 import classes from './PersonalInfo.module.css';
+import Button from '../../../UI/Button/Button';
 
 
 const initialState = {
@@ -233,7 +234,7 @@ const PersonalInfo = (props) => {
           <Modal show={showUploadSuccess} modalClosed={closeModalHandler}>
             <div className={classes["success-text"]}>
               <p>Success!</p>
-              <button type="button" onClick={closeModalHandler}>Confirm</button>
+              <button  type="button" onClick={closeModalHandler} className={classes.button}>Confirm</button>
             </div>
           </Modal>
           <section className={classes["info-item"]}>
@@ -350,7 +351,7 @@ const PersonalInfo = (props) => {
               onChange={(event) => onInputChangeHandler("remark", event)}></textarea>
             {personState.remark.error && personState.remark.touched ? errorMsg : null}
           </section>
-          <button type="submit">{props.routeName === "/patient/new" ? "Create" : "Update"}</button>
+          <button type="submit" className={classes.button}>{props.routeName === "/patient/new" ? "Create" : "Update"}</button>
         </form>
       }
     </Fragment>

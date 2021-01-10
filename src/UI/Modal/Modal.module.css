@@ -19,7 +19,7 @@
   text-align: right;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 800px) {
   .Modal {
     /* width: 80vw; */
     width: 60vw;

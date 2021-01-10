@@ -197,7 +197,7 @@ const DrugInfoEntry = (props) => {
                                 className={fieldErrors.name ? [classes["error"]] : null}
                                 style={{ marginLeft: "0" }}
                                 rows="1"
-                                cols="50"
+                                cols="20"
                                 type="text"
                                 placeholder="Name"
                                 value={drugInfo.name}
@@ -236,7 +236,7 @@ const DrugInfoEntry = (props) => {
                                 className={fieldErrors.manufacturer ? [classes["error"]] : null}
                                 style={{ marginLeft: "0" }}
                                 rows="1"
-                                cols="50"
+                                cols="20"
                                 type="text"
                                 placeholder="Manufacturer"
                                 value={drugInfo.manufacturer}

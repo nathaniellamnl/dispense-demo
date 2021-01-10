@@ -1,10 +1,9 @@
 .list{
-    margin: 1rem 0 2srem 0;
-    padding: 0;
+    margin: 1rem 0 0 0;
+    padding: 0 0 2rem;
     List-style: none;
     display: flex;
     flex-flow:column;
     align-items: flex-start;
-    padding-left: 10px;
     height: 100%; 
 }

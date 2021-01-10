@@ -404,7 +404,6 @@ const TransactionEntry = (props) => {
                                             label={"Drug Item " + i}
                                             variant="outlined"
                                             name={"drugItem" + i}
-                                            // helperText={fieldErrors.drugs[i - 1] ? "Required" : ""}
                                             error={fieldErrors.drugs[i - 1]}
                                         />
                                     }
@@ -421,8 +420,6 @@ const TransactionEntry = (props) => {
                                     id={"drugItem" + i + "Unit"}
                                     name={"drugItem" + i + "Unit"}
                                 ></input>
-                                {/* {fieldErrors.quantities[i - 1]?
-                                    <div className={classes["error-text"]}>Required</div> : null} */}
                                 <div>Unit(s)</div>
                             </div>
                             <div className={classes.spacer}></div>

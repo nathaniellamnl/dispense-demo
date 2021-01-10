@@ -9,7 +9,7 @@
   background-color: rgba(0,0,0,0.5);
 }
 
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 800px) {
   .Backdrop{
       display: none;
   }

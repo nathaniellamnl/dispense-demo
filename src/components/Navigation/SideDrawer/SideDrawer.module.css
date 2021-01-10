@@ -26,7 +26,7 @@
     height: 20px;
 }
 
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 800px) {
     .SideDrawer{
         z-index: 0;
     }
