@@ -40,32 +40,46 @@ describe('PersonalInfo', () => {
         expect(wrapper.find('.errorMsg').exists()).toBe(false);
     })
 
+    it("alert should show if there's a request/server error", () => {
+        resData.data.patients
+        global.fetch = jest.fn(()=> {
+            Promise.resolve({
+                json: () => Promise.resolve({data:{}}) 
+            })
+        });
+
+        // const mockSuccessResponse = {
+        //     data: [
+        //       {
+        //         userId: 1,
+        //         id: 1,
+        //         title: 'My First Album'
+        //       },
+        //       {
+        //         userId: 1,
+        //         id: 2,
+        //         title: 'Album: The Sequel'
+        //       }
+        //     ]
+        //   };
+        // const mockJsonPromise = Promise.resolve(mockSuccessResponse); // 2
+        // const mockFetchPromise = Promise.resolve({ // 3
+        //     json: () => mockJsonPromise,
+        // });
+        // jest.spyOn(global, 'fetch').mockImplementation(() => mockFetchPromise); // 4
+
+
+        // process.nextTick(() => { // 6
+        //     expect(wrapper.find()).toEqual({
+                
+        //     });
+
+        //     global.fetch.mockClear(); // 7
+        //     done(); // 8
+        // });
+    });
+
 });
 
 
-describe('DrugInfoEntry', () => {
-    let entryChangeHandler = jest.fn();
-    let wrapper;
 
-    beforeEach(() => {
-        wrapper = shallow(<DrugInfoEntry id="testing" entryChangeHandler={entryChangeHandler} />)
-    })
-
-    describe('the user populates the input', () => {
-        const item = "Aspirin 80mg";
-        beforeEach(() => {
-            const textArea = wrapper.find('textarea').first();
-            textArea.simulate('change', {
-                target: { value: item }
-            })
-        })
-
-        it('should reflect what the user has typed', () => {
-            console.log(wrapper.debug());
-            const textArea = wrapper.find('textarea').first();
-            expect(textArea.props().value).toBe("Aspirin 80mg");
-        })
-
-    })
-
-})
