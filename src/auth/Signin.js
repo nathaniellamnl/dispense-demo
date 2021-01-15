@@ -2,16 +2,16 @@ import React, { useContext, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
 import classes from './Signin.module.css';
-import { graphqlServerUrl } from '../assets/String'
 import AuthContext from '../context/auth-context';
-import Loader from '../UI/Loader/Loader';
+import Loader from '../ui/Loader/Loader';
 import logo from '../assets/Images/logo192.png';
+import {graphqlRequest} from '../utils/graphqlRequest';
 
 export default function SignIn(props) {
   const [isLoading, setIsLoading] = useState(false);
   const authData = useContext(AuthContext);
 
-  const submitHandler = (event) => {
+  const submitHandler = async(event) => {
     event.preventDefault();
 
     const requestBody = {
@@ -27,32 +27,19 @@ export default function SignIn(props) {
     };
 
     setIsLoading(true);
-    fetch(graphqlServerUrl, {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': 'application/json',
-
-      }
-    }).then(res => {
-      if (res.status !== 200 && res.status !== 201) {
-        throw new Error("Failed");
-      }
-
-      return res.json();
-    }).then(resData => {
+    
+    const resData = await graphqlRequest(requestBody);
+    setIsLoading(false);
+    if(resData.error){
+      alert("An error occured!"); 
+    } else {
       if (resData.data.login.token) {
         authData.login(
           resData.data.login.token,
           resData.data.login.userId,
           resData.data.login.tokenExpiration);
       }
-
-    }).catch(err => {
-      setIsLoading(false);
-      alert("Incorrect email or password!");
-    })
-
+    }
   };
 
   return (
@@ -65,7 +52,7 @@ export default function SignIn(props) {
                 <div className={classes["Container"]}>
                   <h1 className={classes["App-name"]}>Dispense</h1>
                   <div className={classes["Logo-container"]}>
-                    <img src={logo} width="50" height="50" />
+                    <img src={logo} width="50" height="50" alt="App-Logo" />
                   </div>
                   <h1 className={classes["Header"]}>
                     Sign in

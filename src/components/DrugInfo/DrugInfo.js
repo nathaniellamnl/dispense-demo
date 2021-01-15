@@ -4,14 +4,14 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
-import { graphqlServerUrl } from '../../assets/String';
-import Loader from '../../UI/Loader/Loader';
-import Button from '../../UI/Button/Button';
-import Modal from '../../UI/Modal/Modal';
+import Loader from '../../ui/Loader/Loader';
+import Button from '../../ui/Button/Button';
+import Modal from '../../ui/Modal/Modal';
 import DrugInfoEntry from '../DrugInfoEntry/DrugInfoEntry';
-import useTable from '../../UI/Table/useTable';
+import useTable from '../../ui/Table/useTable';
 import classes from './DrugInfo.module.css';
-import useWindowDimensions from '../../Utilities/useWindowDimensions';
+import useWindowDimensions from '../../utils/useWindowDimensions';
+import { graphqlRequest } from '../../utils/graphqlRequest';
 
 const DrugInfo = (props) => {
     const [drugs, setDrugs] = useState([
@@ -81,26 +81,21 @@ const DrugInfo = (props) => {
               `
         };
 
-        fetch(graphqlServerUrl, {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('dispenseToken')
+        async function fetchDrugInfo() {
+            const resData = await graphqlRequest(requestBody);
+            if (resData.error) {
+                alert("An expected error occured");
+            } else {
+
+                resData.data.drugs.map(ele => {
+                    ele.price = +ele.price;
+                })
+                setDrugs(resData.data.drugs);
             }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error("Failed");
-            }
-            return res.json();
-        }).then(resData => {
-            resData.data.drugs.map(ele => {
-                ele.price = +ele.price;
-            })
-            setDrugs(resData.data.drugs);
-        }).catch(err => {
-            alert(err);
-        })
+
+        }
+
+        fetchDrugInfo();
     }, []);
 
     const handleSearch = e => {
@@ -200,7 +195,7 @@ const DrugInfo = (props) => {
         setShowCalculationResults({ calculationResults: calculationResultsString.replace(/..$/, "."), show: true });
     }
 
-    const deleteHandler = () => {
+    const deleteHandler = async () => {
         const requestBody = {
             query: `
                  mutation DeleteDrug($id:ID!) {
@@ -213,26 +208,14 @@ const DrugInfo = (props) => {
         };
 
         setIsDeleting(true);
-        fetch(graphqlServerUrl, {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('dispenseToken')
-            }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error("Failed");
-            }
-            return res.json();
-        }).then(resData => {
-            setIsDeleting(false);
+        const resData = await graphqlRequest(requestBody);
+        setIsDeleting(false);
+        if (resData.error) {
+            alert("An error occured");
+        } else {
             closeDeleteModalHandler();
             operationHandler("delete", openDeleteModal.id, null);
-        }).catch(err => {
-            alert(err);
-            setIsDeleting(false);
-        })
+        }
     }
 
     const operationHandler = (operation, id, entry) => {
@@ -252,6 +235,8 @@ const DrugInfo = (props) => {
                 drugsCopy.push({ ...entry });
                 setDrugs(drugsCopy);
                 break;
+            default:
+                throw Error("An error occured!");
         }
     }
 
@@ -265,9 +250,9 @@ const DrugInfo = (props) => {
                     cols="30"
                     onChange={handleSearch}
                 />
-                <div style={{ height: "20px" }}/> {/* sapcer*/}
+                <div style={{ height: "20px" }} /> {/* sapcer*/}
                 <input style={{ padding: "15px" }} type="number" placeholder="Desired quantity" value={desiredQuantity} onChange={desiredQuantityHandler} />
-                <button className={classes["calculate-button"]} disabled={desiredQuantity > 0? false:true} onClick={calculateBestDeal}>
+                <button className={classes["calculate-button"]} disabled={desiredQuantity > 0 ? false : true} onClick={calculateBestDeal}>
                     Calculate
                 </button>
             </div>

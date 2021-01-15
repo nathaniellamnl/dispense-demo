@@ -5,12 +5,12 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import { IconButton } from '@material-ui/core';
 
-import { graphqlServerUrl } from '../../../../../assets/String';
+import { graphqlRequest } from '../../../../../utils/graphqlRequest';
 import classes from './TransactionEntry.module.css';
-import Loader from '../../../../../UI/Loader/Loader';
+import Loader from '../../../../../ui/Loader/Loader';
 
 const TransactionEntry = (props) => {
-    
+
     const [fieldErrors, setFieldErrors] = useState({
         transactionDate: false,
         drugs: [false],
@@ -24,18 +24,18 @@ const TransactionEntry = (props) => {
         price: "",
         quantity: ""
     }]);
-    
+
     const calculate = (items, quantities) => {
-        
+
         let amount = 0;
         for (let i = 0; i < items.length; i++) {
-                for (const drug of drugInfo) {
-                    if (drug.name === items[i] && quantities) {
-                        amount += drug.price * quantities[i];
-                        break;
-                    }
-                
-            } 
+            for (const drug of drugInfo) {
+                if (drug.name === items[i] && quantities) {
+                    amount += drug.price * quantities[i];
+                    break;
+                }
+
+            }
         }
         return amount;
     }
@@ -106,9 +106,7 @@ const TransactionEntry = (props) => {
             remark: "",
             amount: "",
         });
-
-  
-
+        
     const addDrugItemHandler = () => {
         dispatch({ type: "AddItem" });
     }
@@ -143,34 +141,24 @@ const TransactionEntry = (props) => {
                     id: props.transactionId
                 }
             };
-            fetch(graphqlServerUrl, {
-                method: 'POST',
-                body: JSON.stringify(requestBody),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem("dispenseToken")
-                }
-            }).then(res => {
-                if (res.status !== 200 && res.status !== 201) {
-                    throw new Error("Failed");
-                }
-                return res.json();
-            }).then(res => {
-
-                dispatch({
-                    type: 'Initialize',
-                    transaction: { ...res.data.transactions[0], transactionDate: res.data.transactions[0].transactionDate.substring(0, 10) }
-                });
-                setDrugInfo(res.data.drugs);
+            async function fetchTransactionInfo() {
+                const resData = await graphqlRequest(requestBody);
                 setIsLoading(false);
+                if (resData.error) {
+                    alert("An error occured!");
+                } else {
+                    dispatch({
+                        type: 'Initialize',
+                        transaction: { ...resData.data.transactions[0], transactionDate: resData.data.transactions[0].transactionDate.substring(0, 10) }
+                    });
+                    setDrugInfo(resData.data.drugs);
 
-            }).catch(err => {
-                setIsLoading(false);
-            })
+                }
+            }
 
+            fetchTransactionInfo();
         } else {
             //set to initial value   
-            setIsLoading(true);
             const requestBody = {
                 query: `
                      query {
@@ -182,25 +170,19 @@ const TransactionEntry = (props) => {
                      }
                   `
             };
-            fetch(graphqlServerUrl, {
-                method: 'POST',
-                body: JSON.stringify(requestBody),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem("dispenseToken")
-                }
-            }).then(res => {
-                if (res.status !== 200 && res.status !== 201) {
-                    throw new Error("Failed");
-                }
-                return res.json();
-            }).then(res => {
-                setDrugInfo(res.data.drugs);
-                dispatch({ type: 'Reset' });
+
+            async function fetchDrugInfo() {
+                const resData = await graphqlRequest(requestBody);
                 setIsLoading(false);
-            }).catch(err => {
-                setIsLoading(false);
-            })
+                if (resData.error) {
+                    alert('An error occured!');
+                } else {
+                    setDrugInfo(resData.data.drugs);
+                    dispatch({ type: 'Reset' });
+                }
+            }
+
+            fetchDrugInfo();
         }
         setFieldErrors({
             transactionDate: false,
@@ -218,7 +200,7 @@ const TransactionEntry = (props) => {
         }
     }
 
-    const onSubmit = (event) => {
+    const onSubmit = async (event) => {
         event.preventDefault();
         let allError = false;
         const drugErrors = [];
@@ -233,7 +215,7 @@ const TransactionEntry = (props) => {
             allError = allError || validateField(quantity);
             quantityErrors.push(validateField(quantity));
         }
- 
+
         allError = allError || validateField(purchaseState.transactionDate);
 
         if (allError) {
@@ -297,46 +279,28 @@ const TransactionEntry = (props) => {
         };
 
         setIsLoading(true);
-        fetch(graphqlServerUrl, {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem("dispenseToken")
-            }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error("Failed");
-            }
-            return res.json();
-        }).then(resData => {
-            if (resData.errors) {
-                setIsLoading(false);
-                alert("An unexpected error occured!");
+        const resData = await graphqlRequest(requestBody);
+        setIsLoading(false);
+        if (resData.error) {
+            alert("An error occured!");
+        } else {
+            props.cancelModal();
+            if (props.transactionId) {
+                props.entryChangeHandler("update", props.transactionId, { ...purchaseState, transactionDate: new Date(purchaseState.transactionDate).toISOString() });
             } else {
-                //close modal and display data in transaction record
-                setIsLoading(false);
-                props.cancelModal();
-                if (props.transactionId) {
-                    props.entryChangeHandler("update", props.transactionId, { ...purchaseState, transactionDate: new Date(purchaseState.transactionDate).toISOString() });
-                } else {
-                    props.entryChangeHandler("create", null, { ...purchaseState, _id: resData.data.createTransaction, transactionDate: new Date(purchaseState.transactionDate).toISOString() });
-                }
+                props.entryChangeHandler("create", null, { ...purchaseState, _id: resData.data.createTransaction, transactionDate: new Date(purchaseState.transactionDate).toISOString() });
             }
-        }).catch(err => {
-            setIsLoading(false);
-            alert("An unexpected error occured.");
-        })
+        }
     }
 
     const cancelErrors = () => {
         const drugErrors = [];
         const quantityErrors = [];
 
-        for (const drug of purchaseState.drugs) {
+        purchaseState.drugs.forEach(ele => {
             drugErrors.push(false);
             quantityErrors.push(false);
-        }
+        });
         setFieldErrors({
             transactionDate: false,
             drugs: drugErrors,
@@ -384,18 +348,18 @@ const TransactionEntry = (props) => {
                                         }}
                                     onChange={(event, value) => onAutoCompleteChange(i, value)}
                                     id={"drugItem" + i}
-                                    options={Array.isArray(drugInfo)? [...drugInfo, {
+                                    options={Array.isArray(drugInfo) ? [...drugInfo, {
                                         id: "",
                                         name: "",
                                         price: "",
                                         quantity: ""
-                                    }] :[{
+                                    }] : [{
                                         id: "",
                                         name: "",
                                         price: "",
                                     }]
                                     }
-                                
+
                                     getOptionLabel={(option) => option["name"]}
                                     style={{ width: 400, height: 50 }}
                                     renderInput={(params) =>

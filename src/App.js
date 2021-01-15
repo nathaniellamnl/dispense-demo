@@ -1,7 +1,7 @@
 import React, { Fragment, useReducer, useEffect,Suspense } from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
-import Main from './Main/Main';
+import Main from './main/Main';
 import LoginPage from './auth/Signin';
 import AuthContext from './context/auth-context';
 const PrintEntry = React.lazy(() => import('./components/Patient/PatientProfile/TransactionRecord/PrintTransaction/PrintTransaction'));

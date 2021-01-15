@@ -6,3 +6,9 @@
 .error{
     border: solid 1px #f44336;
   }
+
+.section-label{
+    font-weight: 700;
+    display: block;
+    padding: 16px 0;
+}  

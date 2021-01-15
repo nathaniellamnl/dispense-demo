@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Fragment } from 'react';
 
+import { graphqlRequest } from '../../utils/graphqlRequest';
 import { graphqlServerUrl } from "../../assets/String";
-import buttonClasses from '../../UI/Button/Button.module.css';
+import buttonClasses from '../../ui/Button/Button.module.css';
 import classes from './DrugInfoEntry.module.css';
-import Loader from '../../UI/Loader/Loader';
+import Loader from '../../ui/Loader/Loader';
 
 
 const DrugInfoEntry = (props) => {
@@ -41,37 +42,31 @@ const DrugInfoEntry = (props) => {
                     id: props.id
                 }
             };
-            fetch(graphqlServerUrl, {
-                method: 'POST',
-                body: JSON.stringify(requestBody),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem("dispenseToken")
-                }
-            }).then(res => {
-                if (res.status !== 200 && res.status !== 201) {
-                    throw new Error("Failed");
-                }
-                return res.json();
-            }).then(res => {
-                const reducedDrug = { ...res.data.drugs[0] };
-                setDrugInfo(reducedDrug);
-                setIsLoading(false);
 
-            }).catch(err => {
+            async function fetchDrugInfo() {
+                const resData = await graphqlRequest(requestBody);
                 setIsLoading(false);
-            })
+                if (resData.error) {
+                    alert("An error occured!");
+                } else {
+                    const reducedDrug = { ...resData.data.drugs[0] };
+                    setDrugInfo(reducedDrug);
+
+                }
+            }
+
+            fetchDrugInfo();
 
         } else {
             //set to initial value
-            setDrugInfo({ name: "", price: "", quantity: "", manufacturer:"",packSize:"" });
+            setDrugInfo({ name: "", price: "", quantity: "", manufacturer: "", packSize: "" });
             setIsLoading(false);
         }
         setFieldErrors({
             name: false,
             price: false,
             quantity: false,
-            manufacturer:false,
+            manufacturer: false,
             packSize: false
         })
     }, [props]);
@@ -88,7 +83,7 @@ const DrugInfoEntry = (props) => {
         setDrugInfo({ ...drugInfo, [fieldName]: event.target.value });
     }
 
-    const submitHandler = () => {
+    const submitHandler = async () => {
 
         let allError = false;
 
@@ -107,7 +102,7 @@ const DrugInfoEntry = (props) => {
         } else {
             setFieldErrors({
                 name: false,
-                price:false,
+                price: false,
                 packSize: false,
                 quantity: false,
                 manufacturer: false
@@ -115,7 +110,7 @@ const DrugInfoEntry = (props) => {
         }
 
         let queryValue, requestBody;
-       
+
         if (props.id) {
             queryValue = `  
             mutation {
@@ -154,36 +149,18 @@ const DrugInfoEntry = (props) => {
         };
 
         setIsLoading(true);
-        fetch(graphqlServerUrl, {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem("dispenseToken")
-            }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error("Failed");
-            }
-            return res.json();
-        }).then(resData => {
-            if (resData.errors) {
-                alert(resData.errors);
+        const resData = await graphqlRequest(requestBody);
+        setIsLoading(false);
+        if (resData.error) {
+            alert("An error occured!");
+        } else {
+            props.cancelModal();
+            if (props.id) {
+                props.entryChangeHandler("update", props.id, { ...drugInfo });
             } else {
-                //close modal and display data in transaction record
-                setIsLoading(false);
-                props.cancelModal();
-                if (props.id) {
-                    props.entryChangeHandler("update", props.id, { ...drugInfo });
-                } else {
-                    props.entryChangeHandler("create", null, { ...drugInfo, _id: resData.data.createDrug });
-                }
+                props.entryChangeHandler("create", null, { ...drugInfo, _id: resData.data.createDrug });
             }
-        }).catch(err => {
-            setIsLoading(false);
-            alert(err);
-        })
-
+        }
     }
 
     return (
@@ -192,8 +169,9 @@ const DrugInfoEntry = (props) => {
                 <Fragment>
                     <div >
                         <section>
-                            <h4>Drug Item Name:</h4>
+                            <label className={classes["section-label"]} htmlFor="drugName">Drug Item Name:</label>
                             <textarea
+                                id="drugName"
                                 className={fieldErrors.name ? [classes["error"]] : null}
                                 style={{ marginLeft: "0" }}
                                 rows="1"
@@ -204,8 +182,9 @@ const DrugInfoEntry = (props) => {
                                 onChange={(event) => onFieldChange(event, "name")} />
                         </section>
                         <section>
-                            <h4>Price:</h4>
+                            <label className={classes["section-label"]} htmlFor="price">Price:</label>
                             <input
+                                id="price"
                                 className={fieldErrors.price ? [classes["error"]] : null}
                                 type="number"
                                 placeholder="Price"
@@ -213,8 +192,9 @@ const DrugInfoEntry = (props) => {
                                 onChange={(event) => onFieldChange(event, "price")} />
                         </section>
                         <section>
-                            <h4>Pack Size:</h4>
+                            <label className={classes["section-label"]} htmlFor="packSize">Pack Size:</label>
                             <input
+                                id="packSize"
                                 className={fieldErrors.packSize ? [classes["error"]] : null}
                                 type="number"
                                 placeholder="Pack size"
@@ -222,8 +202,9 @@ const DrugInfoEntry = (props) => {
                                 onChange={(event) => onFieldChange(event, "packSize")} />
                         </section>
                         <section>
-                            <h4>Quantity:</h4>
+                            <label className={classes["section-label"]} htmlFor="quantity">Quantity:</label>
                             <input
+                                id="quantity"
                                 className={fieldErrors.quantity ? [classes["error"]] : null}
                                 type="number"
                                 placeholder="Quantity"
@@ -231,8 +212,9 @@ const DrugInfoEntry = (props) => {
                                 onChange={(event) => onFieldChange(event, "quantity")} />
                         </section>
                         <section>
-                            <h4>Manufacturer:</h4>
+                            <label className={classes["section-label"]} htmlFor="manufacturer">Manufacturer:</label>
                             <textarea
+                                id="manufacturer"
                                 className={fieldErrors.manufacturer ? [classes["error"]] : null}
                                 style={{ marginLeft: "0" }}
                                 rows="1"

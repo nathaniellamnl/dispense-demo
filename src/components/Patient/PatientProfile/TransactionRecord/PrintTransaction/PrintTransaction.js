@@ -3,8 +3,8 @@ import { PDFViewer, Document, Page, Text, View, StyleSheet, Image, Font } from '
 
 import logo from '../../../../../assets/Images/Pharmacy.jpg'
 import font from '../../../../../assets/Fonts/wangHanZou.ttf';
-import { graphqlServerUrl } from '../../../../../assets/String';
-import Loader from '../../../../../UI/Loader/Loader';
+import { graphqlRequest } from '../../../../../utils/graphqlRequest';
+import Loader from '../../../../../ui/Loader/Loader';
 
 
 Font.register({ family: 'WangHanZou', src: font })
@@ -124,42 +124,35 @@ const PrintTransaction = (props) => {
         id: transactionId
       }
     };
-    fetch(graphqlServerUrl, {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem("dispenseToken")
-      }
-    }).then(res => {
-      if (res.status !== 200 && res.status !== 201) {
-        throw new Error("Failed");
-      }
-      return res.json();
-    }).then(resData => {
 
-      const transaction = resData.data.transactions[0];
+    async function fetchTransactionInfo() {
+      const resData = await graphqlRequest(requestBody);
+      if (resData.error) {
+        alert("An error occured!");
+      } else {
+        const transaction = resData.data.transactions[0];
+        const tranformedDrugs = [];
 
-      const tranformedDrugs = [];
-      
-      for (let i = 0; i < transaction.drugs.length; i++) {
-        for (let j = 0; j < resData.data.drugs.length; j++) {
-          if (resData.data.drugs[j].name === transaction.drugs[i]) {
-            tranformedDrugs.push({ drug: transaction.drugs[i], quantity: transaction.quantities[i], price: resData.data.drugs[j].price });
-            break;
+        for (let i = 0; i < transaction.drugs.length; i++) {
+          for (let j = 0; j < resData.data.drugs.length; j++) {
+            if (resData.data.drugs[j].name === transaction.drugs[i]) {
+              tranformedDrugs.push({ drug: transaction.drugs[i], quantity: transaction.quantities[i], price: resData.data.drugs[j].price });
+              break;
+            }
           }
         }
+
+        const transformedTransaction = {
+          ...transaction,
+          drugs: tranformedDrugs
+        };
+
+        setTransaction(transformedTransaction);
       }
+    }
 
-      const transformedTransaction = {
-        ...transaction,
-        drugs: tranformedDrugs
-      };
+    fetchTransactionInfo();
 
-      setTransaction(transformedTransaction);
-    }).catch(err => {
-
-    })
   }, [])
 
   return (
@@ -250,7 +243,7 @@ const PrintTransaction = (props) => {
               </Page>
             </Document>
           </PDFViewer>) : <Loader />}
-  
+
     </Fragment>
   )
 };

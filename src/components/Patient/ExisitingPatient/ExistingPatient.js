@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 
-import { graphqlServerUrl } from '../../../assets/String';
+import { graphqlRequest } from '../../../utils/graphqlRequest';
 import NavigationItems from '../PatientSideBar/NavigationItems';
 import classes from './ExistingPatient.module.css';
 import ExistingPatientProfile from '../PatientProfile/ExistingPatientProfile';
-import Loader from '../../../UI/Loader/Loader';
+import Loader from '../../../ui/Loader/Loader';
 import SearchIcon from '@material-ui/icons/Search';
 import { IconButton } from '@material-ui/core';
-import Modal from '../../../UI/Modal/Modal';
-import useWindowDimensions from '../../../Utilities/useWindowDimensions';
+import Modal from '../../../ui/Modal/Modal';
+import useWindowDimensions from '../../../utils/useWindowDimensions';
 
 
 const Patient = (props) => {
@@ -36,25 +36,17 @@ const Patient = (props) => {
         };
 
         setIsLoading(true);
-        fetch(graphqlServerUrl, {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + props.token
+        async function fetchPatientInfo(){
+            const resData = await graphqlRequest(requestBody);
+            setIsLoading(false);
+            if(resData.error){
+                alert("An error occured!");
+            } else {
+                setPatientBriefInfo([...resData.data.patients]);
             }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error("Failed");
+        }
 
-            }
-            return res.json();
-        }).then(resData => {
-            setPatientBriefInfo([...resData.data.patients]);
-            setIsLoading(false);
-        }).catch(err => {
-            setIsLoading(false);
-        })
+        fetchPatientInfo();
     }, [])
 
     const onNavHandler = () => {

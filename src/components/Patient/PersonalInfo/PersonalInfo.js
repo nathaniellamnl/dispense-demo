@@ -1,12 +1,11 @@
+
 import React, { Fragment, useState, useEffect } from 'react';
 
-
-import Modal from '../../../UI/Modal/Modal';
-import Loader from '../../../UI/Loader/Loader';
+import {graphqlRequest} from '../../../utils/graphqlRequest';
+import Modal from '../../../ui/Modal/Modal';
+import Loader from '../../../ui/Loader/Loader';
 import cloneDeep from 'lodash/cloneDeep';
-import { graphqlServerUrl } from '../../../assets/String';
 import classes from './PersonalInfo.module.css';
-import Button from '../../../UI/Button/Button';
 
 
 const initialState = {
@@ -24,7 +23,6 @@ const initialState = {
 
 const PersonalInfo = (props) => {
   const [personState, setPersonState] = useState(initialState);
-
   const [isLoading, setIsLoading] = useState(false);
   const [showUploadSuccess, setShowUploadSuccess] = useState(false);
 
@@ -51,53 +49,47 @@ const PersonalInfo = (props) => {
              }
           `
       };
+
       setIsLoading(true);
-      fetch(graphqlServerUrl, {
-        method: 'POST',
-        body: JSON.stringify(requestBody),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('dispenseToken')
-        }
-      }).then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          setIsLoading(false);
-          alert("error");
-        }
-        return res.json();
-      }).then(resData => {
-        setPersonState({
-          caseCode: { touched: false, error: false, value: resData.data.patients[0].caseCode },
-          chineseName: { touched: false, error: false, value: resData.data.patients[0].chineseName },
-          englishName: { touched: false, error: false, value: resData.data.patients[0].englishName },
-          age: { touched: false, error: false, value: resData.data.patients[0].age },
-          contactNumber: { touched: false, error: false, value: resData.data.patients[0].contactNumber },
-          dateOfRegistration: { touched: false, error: false, value: resData.data.patients[0].dateOfRegistration ? new Date(resData.data.patients[0].dateOfRegistration).toISOString().substring(0, 10) : "" },
-          address: { touched: false, error: false, value: resData.data.patients[0].address },
-          allergy: { touched: false, error: false, value: resData.data.patients[0].allergy },
-          adverseDrugReaction: { touched: false, error: false, value: resData.data.patients[0].adverseDrugReaction },
-          remark: { touched: false, error: false, value: resData.data.patients[0].remark }
-        });
+      async function fetchPersonalInfo(){
+        const resData = await graphqlRequest(requestBody);
         setIsLoading(false);
-      }).catch(err => {
-        setIsLoading(false);
-        alert(err);
-      })
+        if(resData.error){
+          alert("An error occured!");
+        } else {
+          setPersonState({
+            caseCode: { touched: false, error: false, value: resData.data.patients[0].caseCode },
+            chineseName: { touched: false, error: false, value: resData.data.patients[0].chineseName },
+            englishName: { touched: false, error: false, value: resData.data.patients[0].englishName },
+            age: { touched: false, error: false, value: resData.data.patients[0].age },
+            contactNumber: { touched: false, error: false, value: resData.data.patients[0].contactNumber },
+            dateOfRegistration: { touched: false, error: false, value: resData.data.patients[0].dateOfRegistration ? new Date(resData.data.patients[0].dateOfRegistration).toISOString().substring(0, 10) : "" },
+            address: { touched: false, error: false, value: resData.data.patients[0].address },
+            allergy: { touched: false, error: false, value: resData.data.patients[0].allergy },
+            adverseDrugReaction: { touched: false, error: false, value: resData.data.patients[0].adverseDrugReaction },
+            remark: { touched: false, error: false, value: resData.data.patients[0].remark }
+          });
+        }
+      }
+
+      fetchPersonalInfo();
     } else {
       setPersonState(initialState);
     }
 
   }, [window.location.pathname]);
 
-  const onSubmitHandler = (event) => {
-    event.preventDefault();
 
+  const sanitizeDate = () => {
     let dateOfRegistration = "";
 
     if (personState.dateOfRegistration.value.length > 0) {
       dateOfRegistration = new Date(personState.dateOfRegistration.value).toISOString();
     }
+     return dateOfRegistration;
+  }
 
+  const getValidationResults = () => {
     const personStateCopy = cloneDeep(personState);
     let error = false;
     for (const key in personStateCopy) {
@@ -109,8 +101,39 @@ const PersonalInfo = (props) => {
 
     if (error) {
       setPersonState({ ...personStateCopy });
-      return;
+      return {error:true};
     }
+    return personStateCopy;
+  };
+
+    const postRequest = async(requestBody, personStateCopy) => {
+      setIsLoading(true);
+      const result =await graphqlRequest(requestBody);
+      setIsLoading(false);
+      if (result.error) {
+        alert('An error occured');
+      } else if (props.routeName === "/patient/new") {
+        setShowUploadSuccess(true);
+        setPersonState(initialState);
+      } else {
+        //update patient sidebar
+        props.updateInfo(window.location.pathname.split('/')[3], {
+          caseCode: personStateCopy.caseCode.value,
+          englishName: personStateCopy.englishName.value,
+          chineseName: personStateCopy.chineseName.value
+        });
+        setShowUploadSuccess(true);
+      }
+      
+    }
+
+  const onSubmitHandler = async (event) => {
+    event.preventDefault();
+    const dateOfRegistration = sanitizeDate();
+    const validationResults= getValidationResults(); 
+    if(validationResults.error){
+      return;
+    };
 
     let requestBody;
 
@@ -160,44 +183,7 @@ const PersonalInfo = (props) => {
         `
       };
     }
-
-    setIsLoading(true);
-    fetch(graphqlServerUrl, {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('dispenseToken')
-      }
-    }).then(res => {
-      if (res.status !== 200 && res.status !== 201) {
-        throw new Error("Failed");
-      }
-      return res.json();
-    }).then(resData => {
-      if (resData.errors) {
-        alert(resData.errors);
-      } else if (props.routeName === "/patient/new") {
-        setShowUploadSuccess(true);
-        setPersonState(initialState);
-      } else {
-        //update patient sidebar
-        props.updateInfo(window.location.pathname.split('/')[3], {
-          caseCode: personStateCopy.caseCode.value,
-          englishName: personStateCopy.englishName.value,
-          chineseName: personState.chineseName.value
-        });
-        setShowUploadSuccess(true);
-      }
-
-      setIsLoading(false);
-
-    }).catch(err => {
-
-      setIsLoading(false);
-      alert("An unexpected error occured!");
-    })
-
+    postRequest(requestBody,validationResults);
   }
 
   const NKDAHandler = () => {
@@ -231,12 +217,13 @@ const PersonalInfo = (props) => {
     <Fragment>
       {isLoading ? <div className={classes["form-container"]}> <Loader /> </div> :
         <form className={classes["form-container"]}>
+          {showUploadSuccess && 
           <Modal show={showUploadSuccess} modalClosed={closeModalHandler}>
             <div className={classes["success-text"]}>
               <p>Success!</p>
-              <button  type="button" onClick={closeModalHandler} className={classes.button}>Confirm</button>
+              <button type="button" onClick={closeModalHandler} className={classes.button}>Confirm</button>
             </div>
-          </Modal>
+          </Modal>}
           <section className={classes["info-item"]}>
             <label htmlFor="caseCode">Case Code:</label>
             <input
@@ -285,7 +272,6 @@ const PersonalInfo = (props) => {
             <label htmlFor="contactNumber">Contact Number:</label>
             <input
               className={personState.contactNumber.error && personState.contactNumber.touched ? classes["error"] : null}
-              type="phone"
               id="contactNumber"
               name="contactNumber"
               value={personState.contactNumber.value}
@@ -351,8 +337,8 @@ const PersonalInfo = (props) => {
               onChange={(event) => onInputChangeHandler("remark", event)}></textarea>
             {personState.remark.error && personState.remark.touched ? errorMsg : null}
           </section>
-          <button id="submit" type="button" onClick={onSubmitHandler} 
-           className={classes.button}>{props.routeName === "/patient/new" ? "Create" : "Update"}</button>
+          <button id="submit" type="button" onClick={onSubmitHandler}
+            className={classes.button}>{props.routeName === "/patient/new" ? "Create" : "Update"}</button>
         </form>
       }
     </Fragment>

@@ -1,16 +1,16 @@
 import React, { Fragment, useState, useEffect, Suspense } from 'react';
-import useTable from '../../../../UI/Table/useTable';
+import useTable from '../../../../ui/Table/useTable';
 import { TableBody, TableCell, TableRow, Paper, IconButton } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import PrintIcon from '@material-ui/icons/Print';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-import useWindowDimensions from '../../../../Utilities/useWindowDimensions';
-import Loader from '../../../../UI/Loader/Loader';
-import Button from '../../../../UI/Button/Button';
-import { graphqlServerUrl } from '../../../../assets/String';
-import Modal from '../../../../UI/Modal/Modal';
+import useWindowDimensions from '../../../../utils/useWindowDimensions';
+import Loader from '../../../../ui/Loader/Loader';
+import Button from '../../../../ui/Button/Button';
+import { graphqlRequest } from '../../../../utils/graphqlRequest';
+import Modal from '../../../../ui/Modal/Modal';
 import classescss from './TransactionRecord.module.css';
 const TransactionEntry = React.lazy(() => import('./TransactionEntry/TransactionEntry'));
 
@@ -85,7 +85,7 @@ const TransactionRecord = (props) => {
         setOpenDeleteModal({ open: false, transactionId: null });
     }
 
-    const deleteHandler = () => {
+    const deleteHandler = async () => {
         const requestBody = {
             query: `
                  mutation DeleteTransaction($transactionId:ID!) {
@@ -98,26 +98,14 @@ const TransactionRecord = (props) => {
         };
 
         setIsDeleting(true);
-        fetch(graphqlServerUrl, {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('dispenseToken')
-            }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error("Failed");
-            }
-            return res.json();
-        }).then(resData => {
-            setIsDeleting(false);
+        const resData = await graphqlRequest(requestBody);
+        setIsDeleting(false);
+        if (resData.error) {
+            alert("An error occured!");
+        } else {
             closeDeleteModalHandler();
             operationHandler("delete", openDeleteModal.transactionId, null);
-        }).catch(err => {
-            alert(err);
-            setIsDeleting(false);
-        })
+        }
     }
 
     //fetch transactionrecord
@@ -139,27 +127,21 @@ const TransactionRecord = (props) => {
                 id: props.patientId
             }
         };
-        fetch(graphqlServerUrl, {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('dispenseToken')
-            }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error("Failed");
-            }
-            return res.json();
-        }).then(resData => {
-            resData.data.transactions.map(ele => {
-                ele.amount = +ele.amount;
-            })
-            setTransactionRecord(resData.data.transactions);
 
-        }).catch(err => {
-            alert(err);
-        })
+        async function fetchTransactionRecord(){
+            const resData = await graphqlRequest(requestBody);
+            if(resData.error){
+                alert("An error occured!");
+            } else {
+                resData.data.transactions.map(ele => {
+                    ele.amount = +ele.amount;
+                })
+                setTransactionRecord(resData.data.transactions);
+            }
+        }
+
+        fetchTransactionRecord();
+   
     }, [props]);
 
     useEffect(() => {
@@ -174,7 +156,7 @@ const TransactionRecord = (props) => {
     }, [transactionRecord]);
 
     const openInNewTab = (id) => {
-        const newWindow = window.open("/print/" + id, '_blank', 'noopener,noreferrer')
+        window.open("/print/" + id, '_blank', 'noopener,noreferrer');
 
     }
 
@@ -197,6 +179,8 @@ const TransactionRecord = (props) => {
 
                 setTransactionRecord(transactionRecordCopy);
                 break;
+            default:
+                throw Error("An unexpected error occured!");
         }
     }
 
