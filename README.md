@@ -10,5 +10,7 @@ A pharmacy web app made with MERN stack + graphql  for dispensing, processing tr
 ## CRUD operation on each transaction
 ![alt text](https://firebasestorage.googleapis.com/v0/b/quotation-b50b3.appspot.com/o/transaction.PNG?alt=media&token=8238a723-901c-4e6e-ad4d-56dae4036339)
 ## Testing
-Tests(src/test/int) tests are included 
+Tests(src/test/int) tests are included
+```
 $ npm test
+```
